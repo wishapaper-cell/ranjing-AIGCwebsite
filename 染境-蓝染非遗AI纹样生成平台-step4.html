@@ -1,0 +1,1619 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>染境 - 蓝染非遗AI纹样生成数据库平台</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style type="text/tailwindcss">
+    @layer base {
+      :root {
+        --color-primary: #312E81;
+        --color-secondary: #64748B;
+        --color-accent: #6366F1;
+        --color-accent-light: #818CF8;
+        --color-accent-lighter: #C7D2FE;
+        --color-bg: #EEF2FF;
+        --color-white: #FFFFFF;
+        --color-footer: #1E1B4B;
+        --color-footer-text: #A5B4FC;
+        --color-gold: #C9A96E;
+      }
+      html, body { height: 100%; }
+      body {
+        font-family: 'Noto Sans TC', sans-serif;
+        background-color: var(--color-bg);
+        color: var(--color-primary);
+        overflow-x: hidden;
+      }
+      .font-serif { font-family: 'Noto Serif TC', serif; }
+      .font-sans { font-family: 'Noto Sans TC', sans-serif; }
+    }
+    @layer components {
+      /* === 基础纹样背景 === */
+      .pattern-dot {
+        background-image: radial-gradient(circle, #312E81 1px, transparent 1px);
+        background-size: 24px 24px;
+      }
+      .pattern-grid {
+        background-image: linear-gradient(rgba(99,102,241,0.03) 1px,transparent 1px),
+                          linear-gradient(90deg, rgba(99,102,241,0.03) 1px,transparent 1px);
+        background-size: 40px 40px;
+      }
+      /* 冰裂纹 */
+      .pattern-crackle {
+        background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10 30 L20 20 L30 30 L40 25 L50 35' fill='none' stroke='%236366F1' stroke-width='0.3' opacity='0.06'/%3E%3Cpath d='M15 45 L25 35 L35 40 L45 30' fill='none' stroke='%236366F1' stroke-width='0.3' opacity='0.06'/%3E%3Cpath d='M5 15 L15 10 L25 15 L35 8' fill='none' stroke='%236366F1' stroke-width='0.3' opacity='0.04'/%3E%3C/svg%3E");
+      }
+      /* 螺旋纹 */
+      .pattern-spiral {
+        background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='40' cy='40' r='30' fill='none' stroke='%236366F1' stroke-width='0.3' opacity='0.05'/%3E%3Ccircle cx='40' cy='40' r='20' fill='none' stroke='%236366F1' stroke-width='0.3' opacity='0.05'/%3E%3Ccircle cx='40' cy='40' r='10' fill='none' stroke='%236366F1' stroke-width='0.3' opacity='0.05'/%3E%3Ccircle cx='40' cy='40' r='3' fill='none' stroke='%236366F1' stroke-width='0.3' opacity='0.05'/%3E%3C/svg%3E");
+      }
+      /* 扎染点阵 */
+      .pattern-tie {
+        background-image: url("data:image/svg+xml,%3Csvg width='50' height='50' viewBox='0 0 50 50' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='25' cy='25' r='8' fill='none' stroke='%236366F1' stroke-width='0.4' opacity='0.05'/%3E%3Ccircle cx='25' cy='25' r='15' fill='none' stroke='%236366F1' stroke-width='0.3' opacity='0.04'/%3E%3Ccircle cx='13' cy='13' r='4' fill='none' stroke='%236366F1' stroke-width='0.3' opacity='0.03'/%3E%3Ccircle cx='37' cy='37' r='4' fill='none' stroke='%236366F1' stroke-width='0.3' opacity='0.03'/%3E%3C/svg%3E");
+      }
+      /* 水波纹 */
+      .pattern-wave {
+        background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 20 Q10 10 20 20 T40 20' fill='none' stroke='%236366F1' stroke-width='0.5' opacity='0.08'/%3E%3Cpath d='M0 30 Q10 20 20 30 T40 30' fill='none' stroke='%236366F1' stroke-width='0.4' opacity='0.06'/%3E%3C/svg%3E");
+      }
+      /* 织物编织纹理 */
+      .pattern-fabric {
+        background-image: 
+          repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(49,46,129,0.02) 3px, rgba(49,46,129,0.02) 6px),
+          repeating-linear-gradient(90deg, transparent, transparent 3px, rgba(99,102,241,0.02) 3px, rgba(99,102,241,0.02) 6px);
+      }
+      /* 蜡染蜡裂纹 */
+      .pattern-batik {
+        background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10 50 Q30 30 50 50 T90 50 M20 70 Q40 50 60 70 T80 60 M5 30 Q25 15 45 25 T85 20 M50 10 Q60 30 70 20 T90 40 M15 85 Q35 70 55 85 T90 80' fill='none' stroke='%236366F1' stroke-width='0.4' opacity='0.07'/%3E%3C/svg%3E");
+        background-size: 100px 100px;
+      }
+      /* 传统回纹边框 */
+      .pattern-border {
+        background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5 5 L35 5 L35 10 L10 10 L10 35 L5 35 Z' fill='none' stroke='%236366F1' stroke-width='0.5' opacity='0.06'/%3E%3Cpath d='M15 15 L25 15 L25 25 L15 25 Z' fill='none' stroke='%23818CF8' stroke-width='0.4' opacity='0.04'/%3E%3C/svg%3E");
+        background-size: 40px 40px;
+      }
+      /* 渐变靛蓝大纹理（用于Hero等大区域） */
+      .pattern-indigo-tex {
+        background:
+          radial-gradient(ellipse at 20% 50%, rgba(49,46,129,0.08) 0%, transparent 50%),
+          radial-gradient(ellipse at 80% 20%, rgba(99,102,241,0.06) 0%, transparent 50%),
+          radial-gradient(ellipse at 50% 80%, rgba(49,46,129,0.06) 0%, transparent 50%);
+      }
+      /* 渐变纹理（展览页使用） */
+      .pattern-exhibit {
+        background:
+          radial-gradient(circle at 30% 70%, rgba(49,46,129,0.04) 0%, transparent 60%),
+          radial-gradient(circle at 70% 30%, rgba(99,102,241,0.04) 0%, transparent 60%),
+          url("data:image/svg+xml,%3Csvg width='120' height='120' viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M60 20 L80 40 L60 60 L40 40 Z' fill='none' stroke='%236366F1' stroke-width='0.3' opacity='0.04'/%3E%3Cpath d='M60 60 L80 80 L60 100 L40 80 Z' fill='none' stroke='%236366F1' stroke-width='0.3' opacity='0.04'/%3E%3Cpath d='M20 60 L40 80 L20 100 L0 80 Z' fill='none' stroke='%23818CF8' stroke-width='0.3' opacity='0.03'/%3E%3Cpath d='M100 60 L120 80 L100 100 L80 80 Z' fill='none' stroke='%23818CF8' stroke-width='0.3' opacity='0.03'/%3E%3C/svg%3E");
+        background-size: 120px 120px;
+      }
+      /* === 公共组件样式 === */
+      .hero-gradient {
+        background: linear-gradient(135deg, #312E81 0%, #6366F1 100%);
+      }
+      .hero-gradient2 {
+        background: linear-gradient(160deg, #1E1B4B 0%, #4338CA 40%, #6366F1 100%);
+      }
+      .card-shadow { box-shadow: 0 4px 16px rgba(49,46,129,0.08); }
+      .feature-shadow { box-shadow: 0 2px 12px rgba(49,46,129,0.06); }
+      .search-shadow { box-shadow: 0 8px 32px rgba(49,46,129,0.25); }
+      .stat-card { background: #312E81; }
+      /* === 页面切换 === */
+      .page-content { display: none; }
+      .page-content.active { display: block; }
+      /* === 滚动动画 === */
+      .fade-up { animation: fadeUp 0.6s ease-out both; }
+      @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      /* === 导航高亮 === */
+      .nav-link.active { font-weight: 500; color: #312E81; }
+      /* === 自定义滚动条 === */
+      ::-webkit-scrollbar { width: 6px; }
+      ::-webkit-scrollbar-track { background: #EEF2FF; }
+      ::-webkit-scrollbar-thumb { background: #C7D2FE; border-radius: 3px; }
+      /* === 游戏画布 === */
+      .game-canvas { border: 2px solid #C7D2FE; background: #FFFFFF; }
+      /* === 放大镜效果 === */
+      .img-zoom { transition: transform 0.3s ease; }
+      .img-zoom:hover { transform: scale(1.05); }
+    }
+  </style>
+</head>
+<body class="antialiased">
+
+<!-- ========== 导航栏 ========== -->
+<nav class="fixed top-0 left-0 right-0 z-50 bg-white shadow-[0_1px_4px_rgba(49,46,129,0.06)]">
+  <div class="w-full h-[72px] px-6 flex items-center justify-between">
+    <div class="flex items-center gap-12">
+      <a href="#" onclick="showPage('home')" class="font-serif text-[28px] font-bold text-[#312E81] hover:opacity-80 transition">染境</a>
+      <div class="hidden lg:flex items-center gap-8">
+        <a href="#" onclick="showPage('home')" class="nav-link text-[15px]" data-page="home">首页</a>
+        <a href="#" onclick="showPage('generate')" class="nav-link text-[15px]" data-page="generate">AI生成</a>
+        <a href="#" onclick="showPage('database')" class="nav-link text-[15px]" data-page="database">纹样库</a>
+        <a href="#" onclick="showPage('knowledge')" class="nav-link text-[15px]" data-page="knowledge">知识百科</a>
+        <a href="#" onclick="showPage('game')" class="nav-link text-[15px]" data-page="game">🎮 小游戏</a>
+        <a href="#" onclick="showPage('exhibition')" class="nav-link text-[15px]" data-page="exhibition">展览馆</a>
+      </div>
+    </div>
+    <button onclick="showPage('generate')" class="bg-[#6366F1] text-white px-5 py-3 text-[14px] font-medium hover:opacity-90 transition">开始生成</button>
+  </div>
+</nav>
+
+<!-- ================================================================= -->
+<!-- 首页 -->
+<!-- ================================================================= -->
+<div id="home-page" class="page-content active pt-[72px]">
+
+  <!-- Hero -->
+  <section class="hero-gradient relative overflow-hidden pattern-tie pattern-indigo-tex">
+    <div class="w-full px-6 py-24 flex flex-col items-center text-center">
+      <div class="inline-flex items-center gap-2 px-4 py-3 bg-white/15 backdrop-blur-sm mb-8">
+        <span class="w-2 h-2 rounded-full bg-[#818CF8] animate-pulse"></span>
+        <span class="text-white/90 text-[13px]">AI驱动的非遗文化数字平台</span>
+      </div>
+      <h1 class="font-serif text-[56px] md:text-[64px] font-bold text-white leading-[1.25] mb-6">
+        蓝染纹样<br>智能生成系统
+      </h1>
+      <p class="text-[#C7D2FE] text-[16px] md:text-[18px] leading-8 max-w-[640px] mb-10">
+        融合非遗文化数字化展示与AI纹样生成技术，以人工智能对传统蓝染工艺进行再创作与数字传播，实现传统工艺的现代化表达
+      </p>
+      <div class="w-full max-w-[600px] search-shadow bg-white h-14 flex items-center px-4 gap-3 mb-8" onclick="document.getElementById('hero-search')?.focus()">
+        <svg class="w-5 h-5 text-[#64748B]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" stroke-width="1.5"/><path d="M21 21l-4.35-4.35" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <input id="hero-search" type="text" placeholder="输入关键词，如「扎结法+冰裂纹」" class="flex-1 text-[15px] outline-none text-[#312E81] placeholder:text-[#94A3B8]" onkeydown="if(event.key==='Enter'){showPage('generate');document.getElementById('keywords').value=this.value;setTimeout(()=>generatePatterns(),300);}">
+      </div>
+      <div class="flex items-center gap-3 flex-wrap justify-center">
+        <span class="px-4 py-2.5 bg-white/15 text-white text-[13px] font-medium cursor-pointer hover:bg-white/25 transition" onclick="showPage('generate');document.getElementById('keywords').value='扎结法+冰裂纹';setTimeout(()=>generatePatterns(),300);">扎染</span>
+        <span class="px-4 py-2.5 bg-white/10 text-white/80 text-[13px] cursor-pointer hover:bg-white/20 transition" onclick="showPage('generate');document.getElementById('keywords').value='蜡染法+螺旋纹';setTimeout(()=>generatePatterns(),300);">蜡染</span>
+        <span class="px-4 py-2.5 bg-white/10 text-white/80 text-[13px] cursor-pointer hover:bg-white/20 transition" onclick="showPage('generate');document.getElementById('keywords').value='夹染法+水波纹';setTimeout(()=>generatePatterns(),300);">夹染</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 每日推荐 -->
+  <section class="w-full px-6 py-20 pattern-grid">
+    <div class="max-w-[1200px] mx-auto">
+      <div class="text-center mb-12">
+        <h2 class="font-serif text-[32px] font-semibold text-[#312E81] mb-3">今日纹样</h2>
+        <p class="text-[#64748B] text-[16px]">每日精选传统蓝染纹样，探索非遗之美</p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-white card-shadow overflow-hidden group cursor-pointer hover:-translate-y-1 transition" onclick="showPage('database')">
+          <div class="h-60 relative flex items-center justify-center overflow-hidden"><img src="images/image56.jpeg" alt="冰裂纹·藤蔓纹" class="w-full h-full object-cover img-zoom" loading="lazy" />
+            <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition bg-black/20 flex items-center justify-center">
+              <span class="text-white text-sm font-medium bg-white/20 px-4 py-2">查看详情</span>
+            </div>
+            <svg class="w-20 h-20 text-white/15" viewBox="0 0 80 80" fill="none"><path d="M40 10 L70 30 L40 50 L10 30 Z" stroke="currentColor" stroke-width="2"/><path d="M40 50 L70 70 L40 90 L10 70 Z" stroke="currentColor" stroke-width="2"/></svg>
+          </div>
+          <div class="p-5">
+            <h3 class="font-serif text-[18px] font-medium text-[#312E81] mb-1">冰裂纹·扎染</h3>
+            <p class="text-[13px] text-[#64748B]">云贵地区 · 传统技法</p>
+          </div>
+        </div>
+        <div class="bg-white card-shadow overflow-hidden group cursor-pointer hover:-translate-y-1 transition" onclick="showPage('database')">
+          <div class="h-60 relative flex items-center justify-center overflow-hidden">
+            <img src="images/image13.jpeg" alt="螺旋纹·蜡染" class="w-full h-full object-cover img-zoom" loading="lazy" />
+            <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition bg-black/20 flex items-center justify-center">
+              <span class="text-white text-sm font-medium bg-white/20 px-4 py-2">查看详情</span>
+            </div>
+          </div>
+          <div class="p-5">
+            <h3 class="font-serif text-[18px] font-medium text-[#312E81] mb-1">螺旋纹·蜡染</h3>
+            <p class="text-[13px] text-[#64748B]">湘西苗绣 · 民间传承</p>
+          </div>
+        </div>
+        <div class="bg-white card-shadow overflow-hidden group cursor-pointer hover:-translate-y-1 transition" onclick="showPage('database')">
+          <div class="h-60 relative flex items-center justify-center overflow-hidden"><img src="images/image9.jpeg" alt="鱼纹·水波纹" class="w-full h-full object-cover img-zoom" loading="lazy" />
+            <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition bg-black/20 flex items-center justify-center">
+              <span class="text-white text-sm font-medium bg-white/20 px-4 py-2">查看详情</span>
+            </div>
+          </div>
+          <div class="p-5">
+            <h3 class="font-serif text-[18px] font-medium text-[#312E81] mb-1">水波纹·夹染</h3>
+            <p class="text-[13px] text-[#64748B]">江苏南通 · 精致工艺</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 六大核心功能 -->
+  <section class="w-full px-6 py-20 pattern-fabric">
+    <div class="max-w-[1300px] mx-auto">
+      <div class="text-center mb-12">
+        <h2 class="font-serif text-[32px] font-semibold text-[#312E81] mb-3">六大核心功能</h2>
+        <p class="text-[#64748B] text-[16px]">从AI生成到数字展览，全方位蓝染非遗数字化平台</p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="bg-white p-10 feature-shadow hover:-translate-y-1 transition cursor-pointer" onclick="showPage('generate')"><span class="font-serif text-[48px] font-bold text-[#C7D2FE] block mb-4">01</span><h3 class="font-serif text-[22px] font-bold text-[#312E81] mb-3">AI纹样生成系统</h3><p class="text-[#64748B] text-[14px] leading-6">输入关键词如「扎结法+冰裂纹」，AI智能生成蓝染风格纹样图像，支持多种工艺风格与参数调节</p></div>
+        <div class="bg-white p-10 feature-shadow hover:-translate-y-1 transition cursor-pointer" onclick="showPage('database')"><span class="font-serif text-[48px] font-bold text-[#C7D2FE] block mb-4">02</span><h3 class="font-serif text-[22px] font-bold text-[#312E81] mb-3">纹样数据库</h3><p class="text-[#64748B] text-[14px] leading-6">收录传统蓝染纹样数字档案，按工艺类型、地域来源、文化寓意分类，每件纹样配有详实背景资料</p></div>
+        <div class="bg-white p-10 feature-shadow hover:-translate-y-1 transition cursor-pointer" onclick="showPage('knowledge')"><span class="font-serif text-[48px] font-bold text-[#C7D2FE] block mb-4">03</span><h3 class="font-serif text-[22px] font-bold text-[#312E81] mb-3">非遗知识百科</h3><p class="text-[#64748B] text-[14px] leading-6">涵盖扎染、蜡染、夹染工艺介绍，非遗传承人档案与视频，以及中国非遗地图地域分布可视化</p></div>
+        <div class="bg-white p-10 feature-shadow hover:-translate-y-1 transition cursor-pointer" onclick="showPage('game')"><span class="font-serif text-[48px] font-bold text-[#C7D2FE] block mb-4">04</span><h3 class="font-serif text-[22px] font-bold text-[#312E81] mb-3">互动体验系统</h3><p class="text-[#64748B] text-[14px] leading-6">蓝染绘图小游戏模拟扎染步骤，AI染布模拟器可自由调节布料、染料浓度与扎法密度</p></div>
+        <div class="bg-white p-10 feature-shadow hover:-translate-y-1 transition cursor-pointer" onclick="showPage('exhibition')"><span class="font-serif text-[48px] font-bold text-[#C7D2FE] block mb-4">05</span><h3 class="font-serif text-[22px] font-bold text-[#312E81] mb-3">数字展览传播</h3><p class="text-[#64748B] text-[14px] leading-6">线上展览馆滑动浏览纹样，纹样故事卡片可一键分享，每日推荐系统推送精选内容</p></div>
+        <div class="bg-white p-10 feature-shadow hover:-translate-y-1 transition"><span class="font-serif text-[48px] font-bold text-[#C7D2FE] block mb-4">06</span><h3 class="font-serif text-[22px] font-bold text-[#312E81] mb-3">文创展示转化</h3><p class="text-[#64748B] text-[14px] leading-6">蓝染围巾、服装、布艺等文创产品展示，支持用户纹样至文创延展设计的AI定制概念功能</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 非遗地图预览 -->
+  <section class="hero-gradient2 w-full py-20 pattern-tie relative overflow-hidden">
+    <div class="max-w-[1200px] mx-auto px-6 text-center relative z-10">
+      <div class="inline-flex items-center gap-2 px-4 py-2 bg-white/10 mb-8"><span class="text-white/80 text-[13px]">📍 非遗文化地域分布</span></div>
+      <h2 class="font-serif text-[32px] font-semibold text-white mb-4">非遗地图</h2>
+      <p class="text-[#C7D2FE] text-[16px] mb-12">覆盖26个地域，12位代表性传承人，探索中国蓝染文化的地理脉络</p>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-[900px] mx-auto mb-10">
+        <div class="bg-white/10 p-4 hover:bg-white/20 transition cursor-pointer"><span class="text-white/90 text-sm font-medium">🏔️ 云贵高原</span><p class="text-[#A5B4FC] text-xs mt-1">扎染发源地</p></div>
+        <div class="bg-white/10 p-4 hover:bg-white/20 transition cursor-pointer"><span class="text-white/90 text-sm font-medium">🌿 湘西苗寨</span><p class="text-[#A5B4FC] text-xs mt-1">蜡染传承地</p></div>
+        <div class="bg-white/10 p-4 hover:bg-white/20 transition cursor-pointer"><span class="text-white/90 text-sm font-medium">🏯 江苏南通</span><p class="text-[#A5B4FC] text-xs mt-1">夹染工艺</p></div>
+        <div class="bg-white/10 p-4 hover:bg-white/20 transition cursor-pointer"><span class="text-white/90 text-sm font-medium">🏘️ 浙江温州</span><p class="text-[#A5B4FC] text-xs mt-1">靛蓝染坊</p></div>
+      </div>
+      <button onclick="showPage('knowledge')" class="bg-white/15 text-white px-6 py-3 text-sm font-medium hover:bg-white/25 transition">探索非遗地图 →</button>
+    </div>
+  </section>
+
+  <!-- 数据统计 -->
+  <section class="stat-card w-full py-20 pattern-border">
+    <div class="max-w-[1200px] mx-auto px-6">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+        <div><div class="font-serif text-[48px] font-bold text-[#818CF8] mb-2">3,200+</div><div class="text-[15px] text-[#C7D2FE]">传统纹样收录</div></div>
+        <div><div class="font-serif text-[48px] font-bold text-[#818CF8] mb-2">48,000+</div><div class="text-[15px] text-[#C7D2FE]">AI生成纹样</div></div>
+        <div><div class="font-serif text-[48px] font-bold text-[#818CF8] mb-2">12</div><div class="text-[15px] text-[#C7D2FE]">非遗传承人</div></div>
+        <div><div class="font-serif text-[48px] font-bold text-[#818CF8] mb-2">26</div><div class="text-[15px] text-[#C7D2FE]">覆盖地域</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 灵感广场 -->
+  <section class="w-full px-6 py-20 pattern-batik">
+    <div class="max-w-[1200px] mx-auto">
+      <div class="text-center mb-12">
+        <h2 class="font-serif text-[32px] font-semibold text-[#312E81] mb-3">灵感广场</h2>
+        <p class="text-[#64748B] text-[16px]">来自用户的AI创意纹样作品，灵感碰撞与交流</p>
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="flex flex-col gap-4">
+          <div class="bg-white card-shadow overflow-hidden group cursor-pointer"><div class="h-[200px] relative overflow-hidden"><img src="images/image10.jpeg" alt="八角纹·菱形纹" class="w-full h-full object-cover img-zoom" loading="lazy" /></div><div class="p-3"><p class="text-[12px] text-[#64748B] font-medium">蓝染爱好者·小雅</p></div></div>
+          <div class="bg-white card-shadow overflow-hidden group cursor-pointer"><div class="h-[150px] relative overflow-hidden"><img src="images/image11.jpeg" alt="缠枝花·牡丹纹" class="w-full h-full object-cover img-zoom" loading="lazy" /></div><div class="p-3"><p class="text-[12px] text-[#64748B] font-medium">扎染传习人·老林</p></div></div>
+        </div>
+        <div class="flex flex-col gap-4">
+          <div class="bg-white card-shadow overflow-hidden group cursor-pointer"><div class="h-[200px] relative overflow-hidden"><img src="images/image12.jpeg" alt="莲花纹·团花纹" class="w-full h-full object-cover img-zoom" loading="lazy" /></div><div class="p-3"><p class="text-[12px] text-[#64748B] font-medium">设计师·阿敏</p></div></div>
+          <div class="bg-white card-shadow overflow-hidden group cursor-pointer"><div class="h-[150px] relative overflow-hidden"><img src="images/image13.jpeg" alt="蝴蝶纹·藤蔓纹" class="w-full h-full object-cover img-zoom" loading="lazy" /></div><div class="p-3"><p class="text-[12px] text-[#64748B] font-medium">纹样收藏家·阿杰</p></div></div>
+        </div>
+        <div class="flex flex-col gap-4">
+          <div class="bg-white card-shadow overflow-hidden group cursor-pointer"><div class="h-[200px] relative overflow-hidden"><img src="images/image14.jpeg" alt="鱼纹·水波纹" class="w-full h-full object-cover img-zoom" loading="lazy" /></div><div class="p-3"><p class="text-[12px] text-[#64748B] font-medium">非遗研究者·小梅</p></div></div>
+          <div class="bg-white card-shadow overflow-hidden group cursor-pointer"><div class="h-[150px] relative overflow-hidden"><img src="images/image15.jpeg" alt="八角纹·菱形纹" class="w-full h-full object-cover img-zoom" loading="lazy" /></div><div class="p-3"><p class="text-[12px] text-[#64748B] font-medium">手工艺人·大福</p></div></div>
+        </div>
+        <div class="flex flex-col gap-4">
+          <div class="bg-white card-shadow overflow-hidden group cursor-pointer"><div class="h-[200px] relative overflow-hidden"><img src="images/image16.jpeg" alt="缠枝花·牡丹纹" class="w-full h-full object-cover img-zoom" loading="lazy" /></div><div class="p-3"><p class="text-[12px] text-[#64748B] font-medium">文化传播者·小华</p></div></div>
+          <div class="bg-white card-shadow overflow-hidden group cursor-pointer"><div class="h-[150px] relative overflow-hidden"><img src="images/image17.jpeg" alt="莲花纹·团花纹" class="w-full h-full object-cover img-zoom" loading="lazy" /></div><div class="p-3"><p class="text-[12px] text-[#64748B] font-medium">文创设计师·小陈</p></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 页脚 -->
+  <footer class="bg-[#1E1B4B] w-full py-20">
+    <div class="max-w-[1200px] mx-auto px-6">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+        <div class="md:col-span-2"><h3 class="font-serif text-[28px] font-bold text-[#818CF8] mb-4">染境</h3><p class="text-[14px] text-[#A5B4FC] leading-6 max-w-[400px]">以AI之智，传蓝染之美。致力于传统蓝染非遗文化的数字化保护与创新传播，让千年靛蓝焕发数字新生。</p></div>
+        <div><h4 class="text-[14px] font-semibold text-[#818CF8] mb-4">产品</h4><ul class="space-y-3"><li><a href="#" onclick="showPage('generate')" class="text-[13px] text-[#A5B4FC] hover:text-white transition">AI纹样生成</a></li><li><a href="#" onclick="showPage('database')" class="text-[13px] text-[#A5B4FC] hover:text-white transition">纹样数据库</a></li><li><a href="#" onclick="showPage('exhibition')" class="text-[13px] text-[#A5B4FC] hover:text-white transition">线上展览馆</a></li></ul></div>
+        <div><h4 class="text-[14px] font-semibold text-[#818CF8] mb-4">知识</h4><ul class="space-y-3"><li><a href="#" onclick="showPage('knowledge')" class="text-[13px] text-[#A5B4FC] hover:text-white transition">工艺百科</a></li><li><a href="#" onclick="showPage('knowledge')" class="text-[13px] text-[#A5B4FC] hover:text-white transition">传承人档案</a></li><li><a href="#" onclick="showPage('knowledge')" class="text-[13px] text-[#A5B4FC] hover:text-white transition">非遗地图</a></li></ul></div>
+      </div>
+      <div class="h-px bg-[#312E81] mb-8"></div>
+      <div class="flex flex-col md:flex-row justify-between items-center gap-4"><p class="text-[12px] text-[#64748B]">© 2026 染境 · 蓝染非遗AI纹样生成数据库平台</p><p class="text-[12px] text-[#64748B]">非遗文化遗产数字化保护项目</p></div>
+    </div>
+  </footer>
+</div>
+
+<!-- ================================================================= -->
+<!-- AI生成页 -->
+<!-- ================================================================= -->
+<div id="generate-page" class="page-content pt-[72px]">
+  <div class="flex flex-col lg:flex-row min-h-[calc(100vh-72px)]">
+    <!-- 左侧控制面板 -->
+    <div class="w-full lg:w-[420px] bg-white p-10 flex flex-col gap-8 overflow-y-auto">
+      <h2 class="font-serif text-[24px] font-bold text-[#312E81]">纹样生成</h2>
+      <div>
+        <label class="text-[14px] font-semibold text-[#312E81] block mb-2">纹样关键词</label>
+        <div class="h-12 bg-[#EEF2FF] px-4 flex items-center">
+          <input type="text" id="keywords" value="扎结法+冰裂纹" class="w-full bg-transparent text-[14px] outline-none text-[#312E81] placeholder:text-[#94A3B8]">
+        </div>
+      </div>
+      <div>
+        <label class="text-[14px] font-semibold text-[#312E81] block mb-3">工艺风格</label>
+        <div class="flex gap-3">
+          <button class="style-btn px-4 py-2.5 bg-[#6366F1] text-white text-[13px] font-medium" data-style="扎染">扎染</button>
+          <button class="style-btn px-4 py-2.5 bg-[#EEF2FF] text-[#64748B] text-[13px] hover:bg-[#E0E7FF] transition" data-style="蜡染">蜡染</button>
+          <button class="style-btn px-4 py-2.5 bg-[#EEF2FF] text-[#64748B] text-[13px] hover:bg-[#E0E7FF] transition" data-style="夹染">夹染</button>
+        </div>
+      </div>
+      <div>
+        <label class="text-[14px] font-semibold text-[#312E81] block mb-3">复杂度</label>
+        <div class="relative h-2 bg-[#EEF2FF] cursor-pointer" onclick="setSlider(this, 'complexity', event)"><div id="complexity-fill" class="absolute left-0 top-0 h-full bg-[#6366F1]" style="width:70%"></div></div>
+      </div>
+      <div>
+        <label class="text-[14px] font-semibold text-[#312E81] block mb-3">对称性</label>
+        <div class="relative h-2 bg-[#EEF2FF] cursor-pointer" onclick="setSlider(this, 'symmetry', event)"><div id="symmetry-fill" class="absolute left-0 top-0 h-full bg-[#6366F1]" style="width:50%"></div></div>
+      </div>
+      <div>
+        <label class="text-[14px] font-semibold text-[#312E81] block mb-3">纹样密度</label>
+        <div class="relative h-2 bg-[#EEF2FF] cursor-pointer" onclick="setSlider(this, 'density', event)"><div id="density-fill" class="absolute left-0 top-0 h-full bg-[#6366F1]" style="width:55%"></div></div>
+      </div>
+      <button onclick="generatePatterns()" id="generate-btn" class="h-14 bg-[#6366F1] text-white text-[16px] font-semibold hover:opacity-90 transition flex items-center justify-center gap-2">
+        <span id="btn-text">生成纹样</span>
+        <svg id="btn-spinner" class="hidden w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+      </button>
+    </div>
+    <!-- 右侧结果区 -->
+    <div class="flex-1 p-10 bg-[#EEF2FF] pattern-grid">
+      <div class="flex justify-between items-center mb-4"><h2 class="font-serif text-[24px] font-bold text-[#312E81]">生成结果</h2><span id="results-count" class="text-[14px] text-[#64748B]">4 张纹样</span></div>
+      <div id="gen-params-bar" class="flex flex-wrap gap-2 mb-6">
+        <span class="px-3 py-1.5 bg-white text-[12px] text-[#64748B] border border-[#E0E7FF]">工艺：<b id="bar-style" class="text-[#312E81]">扎染</b></span>
+        <span class="px-3 py-1.5 bg-white text-[12px] text-[#64748B] border border-[#E0E7FF]">复杂度：<b id="bar-complexity" class="text-[#312E81]">高</b></span>
+        <span class="px-3 py-1.5 bg-white text-[12px] text-[#64748B] border border-[#E0E7FF]">对称性：<b id="bar-symmetry" class="text-[#312E81]">中</b></span>
+        <span class="px-3 py-1.5 bg-white text-[12px] text-[#64748B] border border-[#E0E7FF]">密度：<b id="bar-density" class="text-[#312E81]">中</b></span>
+      </div>
+      <div id="results-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-white card-shadow overflow-hidden group"><div class="h-[300px] relative overflow-hidden"><img src="images/image42.jpeg" alt="冰裂纹·扎染" class="w-full h-full object-cover img-zoom" loading="lazy" /><div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition bg-black/10 flex items-center justify-center"><button class="bg-white/90 text-[#312E81] px-4 py-2 text-sm font-medium" onclick="openImageModal('images/image42.jpeg','冰裂纹·扎染')">查看大图</button></div><div class="absolute top-3 left-3 flex gap-1.5"><span class="px-2 py-1 bg-white/90 text-[11px] text-[#312E81] font-medium">扎染</span><span class="px-2 py-1 bg-[#6366F1]/90 text-[11px] text-white font-medium">繁复</span></div></div><div class="p-5"><h3 class="font-serif text-[16px] font-medium text-[#312E81] mb-1">冰裂纹 · 轴对称纹样</h3><p class="text-[12px] text-[#64748B] mb-3">中密度 · 均衡布局</p><div class="flex gap-3"><button class="text-[12px] text-[#64748B] hover:text-[#6366F1] transition" onclick="this.textContent='♥ 已收藏'; this.classList.add('text-[#6366F1]')">收藏</button><button class="text-[12px] text-[#64748B] hover:text-[#6366F1] transition">分享</button><button class="text-[12px] text-[#6366F1] font-medium hover:opacity-80" onclick="localVariation(this)">局部变化</button></div></div></div>
+        <div class="bg-white card-shadow overflow-hidden group"><div class="h-[260px] relative overflow-hidden"><img src="images/image43.jpeg" alt="冰裂纹·扎染" class="w-full h-full object-cover img-zoom" loading="lazy" /><div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition bg-black/10 flex items-center justify-center"><button class="bg-white/90 text-[#312E81] px-4 py-2 text-sm font-medium" onclick="openImageModal('images/image43.jpeg','冰裂纹·扎染')">查看大图</button></div><div class="absolute top-3 left-3 flex gap-1.5"><span class="px-2 py-1 bg-white/90 text-[11px] text-[#312E81] font-medium">扎染</span><span class="px-2 py-1 bg-[#6366F1]/90 text-[11px] text-white font-medium">繁复</span></div></div><div class="p-5"><h3 class="font-serif text-[16px] font-medium text-[#312E81] mb-1">冰裂纹 · 中心对称</h3><p class="text-[12px] text-[#64748B] mb-3">中密度 · 均衡布局</p><div class="flex gap-3"><button class="text-[12px] text-[#64748B] hover:text-[#6366F1] transition">收藏</button><button class="text-[12px] text-[#64748B] hover:text-[#6366F1] transition">分享</button></div></div></div>
+        <div class="bg-white card-shadow overflow-hidden group"><div class="h-[300px] relative overflow-hidden"><img src="images/image44.jpeg" alt="冰裂纹·扎染" class="w-full h-full object-cover img-zoom" loading="lazy" /><div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition bg-black/10 flex items-center justify-center"><button class="bg-white/90 text-[#312E81] px-4 py-2 text-sm font-medium" onclick="openImageModal('images/image44.jpeg','冰裂纹·扎染')">查看大图</button></div><div class="absolute top-3 left-3 flex gap-1.5"><span class="px-2 py-1 bg-white/90 text-[11px] text-[#312E81] font-medium">扎染</span><span class="px-2 py-1 bg-[#6366F1]/90 text-[11px] text-white font-medium">繁复</span></div></div><div class="p-5"><h3 class="font-serif text-[16px] font-medium text-[#312E81] mb-1">冰裂纹 · 四方连续</h3><p class="text-[12px] text-[#64748B] mb-3">中密度 · 均衡布局</p><div class="flex gap-3"><button class="text-[12px] text-[#64748B] hover:text-[#6366F1] transition">收藏</button><button class="text-[12px] text-[#64748B] hover:text-[#6366F1] transition">分享</button><button class="text-[12px] text-[#6366F1] font-medium hover:opacity-80" onclick="localVariation(this)">局部变化</button></div></div></div>
+        <div class="bg-white card-shadow overflow-hidden group"><div class="h-[260px] relative overflow-hidden"><img src="images/image55.jpeg" alt="冰裂纹·扎染" class="w-full h-full object-cover img-zoom" loading="lazy" /><div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition bg-black/10 flex items-center justify-center"><button class="bg-white/90 text-[#312E81] px-4 py-2 text-sm font-medium" onclick="openImageModal('images/image55.jpeg','冰裂纹·扎染')">查看大图</button></div><div class="absolute top-3 left-3 flex gap-1.5"><span class="px-2 py-1 bg-white/90 text-[11px] text-[#312E81] font-medium">扎染</span><span class="px-2 py-1 bg-[#6366F1]/90 text-[11px] text-white font-medium">繁复</span></div></div><div class="p-5"><h3 class="font-serif text-[16px] font-medium text-[#312E81] mb-1">冰裂纹 · 完美对称</h3><p class="text-[12px] text-[#64748B] mb-3">中密度 · 均衡布局</p><div class="flex gap-3"><button class="text-[12px] text-[#64748B] hover:text-[#6366F1] transition">收藏</button><button class="text-[12px] text-[#64748B] hover:text-[#6366F1] transition">分享</button></div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================= -->
+<!-- 纹样数据库页 -->
+<!-- ================================================================= -->
+<div id="database-page" class="page-content pt-[72px]">
+  <!-- 顶部Hero -->
+  <section class="hero-gradient pattern-fabric pattern-indigo-tex py-16 px-6 text-center">
+    <h1 class="font-serif text-[36px] md:text-[48px] font-bold text-white mb-4">纹样数据库</h1>
+    <p class="text-[#C7D2FE] text-[16px] max-w-[600px] mx-auto mb-8">收录3,200+传统蓝染纹样数字档案，按工艺、地域、纹样类型分类，每件纹样配有详实背景资料与工艺说明</p>
+    <!-- 搜索筛选栏 -->
+    <div class="max-w-[800px] mx-auto flex flex-col sm:flex-row gap-3">
+      <div class="flex-1 bg-white h-12 flex items-center px-4 gap-3" onclick="document.getElementById('db-search')?.focus()">
+        <svg class="w-5 h-5 text-[#94A3B8]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" stroke-width="1.5"/><path d="M21 21l-4.35-4.35" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <input id="db-search" type="text" placeholder="搜索纹样名称、工艺、地域..." class="flex-1 text-[15px] outline-none text-[#312E81] placeholder:text-[#94A3B8]"
+          onkeyup="filterDatabase()">
+      </div>
+      <select id="db-filter-craft" class="h-12 px-4 bg-white text-[14px] text-[#64748B] outline-none cursor-pointer" onchange="filterDatabase()">
+        <option value="all">全部工艺</option>
+        <option value="蓝印花布">蓝印花布</option>
+        <option value="扎染">扎染</option>
+        <option value="蜡染">蜡染</option>
+        <option value="蓝染">蓝染</option>
+        <option value="夹缬">夹缬</option>
+        <option value="现代蓝染">现代蓝染</option>
+      </select>
+      <select id="db-filter-region" class="h-12 px-4 bg-white text-[14px] text-[#64748B] outline-none cursor-pointer" onchange="filterDatabase()">
+        <option value="all">全部地域</option>
+        <option value="云贵">云贵地区</option>
+        <option value="湘西">湘西苗寨</option>
+        <option value="江苏">江苏南通</option>
+        <option value="浙江">浙江温州</option>
+      </select>
+    </div>
+  </section>
+
+  <!-- 纹样网格 -->
+  <section class="w-full px-6 py-16 pattern-border">
+    <div class="max-w-[1300px] mx-auto">
+      <div class="flex justify-between items-center mb-6">
+        <span id="db-result-count" class="text-[14px] text-[#64748B]">共 0 件纹样</span>
+        <div class="flex gap-2 text-[12px]">
+          <span class="px-3 py-1.5 bg-[#EEF2FF] text-[#6366F1] font-medium">蓝印花布 28</span>
+          <span class="px-3 py-1.5 bg-[#EEF2FF] text-[#6366F1] font-medium">扎染 22</span>
+          <span class="px-3 py-1.5 bg-[#EEF2FF] text-[#6366F1] font-medium">蜡染 20</span>
+          <span class="px-3 py-1.5 bg-[#EEF2FF] text-[#6366F1] font-medium hidden sm:inline">蓝染 14</span>
+          <span class="px-3 py-1.5 bg-[#EEF2FF] text-[#6366F1] font-medium hidden sm:inline">夹缬 8</span>
+          <span class="px-3 py-1.5 bg-[#EEF2FF] text-[#6366F1] font-medium hidden md:inline">现代蓝染 8</span>
+        </div>
+      </div>
+      <div id="database-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- 纹样条目由JS动态生成 -->
+      </div>
+      <div class="text-center mt-10"><button onclick="loadMoreDatabase()" id="db-load-more" class="px-8 py-3 bg-white card-shadow text-[14px] text-[#312E81] font-medium hover:bg-[#EEF2FF] transition">加载更多纹样</button></div>
+    </div>
+  </section>
+</div>
+
+<!-- ================================================================= -->
+<!-- 非遗知识百科页 -->
+<!-- ================================================================= -->
+<div id="knowledge-page" class="page-content pt-[72px]">
+  <!-- Hero -->
+  <section class="w-full py-16 px-6 text-center bg-gradient-to-b from-[#EEF2FF] to-white">
+    <h1 class="font-serif text-[36px] md:text-[48px] font-bold text-[#312E81] mb-4">非遗知识百科</h1>
+    <p class="text-[#64748B] text-[16px] max-w-[600px] mx-auto">深入探索扎染、蜡染、夹染三大蓝染工艺的千年传承</p>
+  </section>
+
+  <!-- 工艺标签切换 -->
+  <section class="w-full px-6 pb-8">
+    <div class="max-w-[1200px] mx-auto flex justify-center gap-4 flex-wrap">
+      <button class="know-tab px-6 py-2.5 bg-[#6366F1] text-white text-[15px] font-medium" onclick="switchKnowTab('zharan')">扎染工艺</button>
+      <button class="know-tab px-6 py-2.5 bg-[#EEF2FF] text-[#64748B] text-[15px]" onclick="switchKnowTab('laran')">蜡染工艺</button>
+      <button class="know-tab px-6 py-2.5 bg-[#EEF2FF] text-[#64748B] text-[15px]" onclick="switchKnowTab('jiaran')">夹染工艺</button>
+      <button class="know-tab px-6 py-2.5 bg-[#EEF2FF] text-[#64748B] text-[15px]" onclick="switchKnowTab('inheritor')">传承人档案</button>
+      <button class="know-tab px-6 py-2.5 bg-[#EEF2FF] text-[#64748B] text-[15px]" onclick="switchKnowTab('map')">非遗地图</button>
+    </div>
+  </section>
+
+  <!-- 知识内容区 -->
+  <section class="w-full px-6 py-8">
+    <div class="max-w-[1200px] mx-auto">
+      <!-- 扎染工艺 -->
+      <div id="know-zharan" class="know-content">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+          <div class="bg-white card-shadow p-8">
+            <h2 class="font-serif text-[28px] font-bold text-[#312E81] mb-6">扎染工艺</h2>
+            <p class="text-[#64748B] leading-7 mb-6 text-[15px]">
+              扎染，古称"绞缬"，是中国传统的手工染色技术之一。通过纱、线、绳等工具对织物进行扎、缝、缚、缀、夹等多种形式组合后进行染色，形成独特的晕染效果和防染花纹。每一件扎染作品都因其手工制作的不可复制性而独一无二。
+            </p>
+            <div class="bg-[#EEF2FF] p-5">
+              <h3 class="font-serif text-[18px] font-semibold text-[#312E81] mb-3">工艺步骤</h3>
+              <div class="space-y-3">
+                <div class="flex items-start gap-3"><span class="w-6 h-6 rounded-full bg-[#6366F1] text-white text-xs flex items-center justify-center shrink-0 mt-0.5">1</span><div><p class="text-[14px] font-medium text-[#312E81]">设计图案</p><p class="text-[13px] text-[#64748B]">根据纹样设计确定扎结的位置和方式</p></div></div>
+                <div class="flex items-start gap-3"><span class="w-6 h-6 rounded-full bg-[#6366F1] text-white text-xs flex items-center justify-center shrink-0 mt-0.5">2</span><div><p class="text-[14px] font-medium text-[#312E81]">扎结布料</p><p class="text-[13px] text-[#64748B]">用针线或绳子紧密扎结，阻止染料渗透</p></div></div>
+                <div class="flex items-start gap-3"><span class="w-6 h-6 rounded-full bg-[#6366F1] text-white text-xs flex items-center justify-center shrink-0 mt-0.5">3</span><div><p class="text-[14px] font-medium text-[#312E81]">浸染上色</p><p class="text-[13px] text-[#64748B]">放入靛蓝染缸中反复浸染，每次约15-30分钟</p></div></div>
+                <div class="flex items-start gap-3"><span class="w-6 h-6 rounded-full bg-[#6366F1] text-white text-xs flex items-center justify-center shrink-0 mt-0.5">4</span><div><p class="text-[14px] font-medium text-[#312E81]">拆结展开</p><p class="text-[13px] text-[#64748B]">解开所有扎结，呈现独特的冰裂纹与晕染效果</p></div></div>
+              </div>
+            </div>
+          </div>
+          <div class="relative p-8 flex flex-col justify-center items-center text-center min-h-[400px] overflow-hidden"><img src="images/image27.jpeg" alt="莲花纹·团花纹" class="absolute inset-0 w-full h-full object-cover" loading="lazy" /><div class="absolute inset-0 bg-gradient-to-br from-[#1e2143]/80 via-[#3a3e6b]/70 to-[#6366F1]/80"></div>
+            <div class="text-white/20 text-[120px] font-serif mb-4">扎</div>
+            <p class="text-white/80 text-[18px] leading-8">"扎结之处，留白之美；<br>拆线之时，图案天成。"</p>
+            <p class="text-[#A5B4FC] text-[14px] mt-4">— 云南大理白族扎染谚语</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 蜡染工艺 -->
+      <div id="know-laran" class="know-content hidden">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+          <div class="bg-white card-shadow p-8">
+            <h2 class="font-serif text-[28px] font-bold text-[#312E81] mb-6">蜡染工艺</h2>
+            <p class="text-[#64748B] leading-7 mb-6 text-[15px]">
+              蜡染，古称"蜡缬"，是用蜡刀蘸熔蜡绘花于布后以蓝靛浸染，染后去蜡，布面呈现蓝底白花或白底蓝花的多种图案。蜡染图案丰富、色调素雅，风格独特，多用于制作服装服饰和各种生活用品。
+            </p>
+            <div class="bg-[#EEF2FF] p-5">
+              <h3 class="font-serif text-[18px] font-semibold text-[#312E81] mb-3">工艺特点</h3>
+              <div class="space-y-3">
+                <div class="flex items-start gap-3"><span class="text-[#6366F1] text-lg">•</span><div><p class="text-[14px] text-[#312E81] font-medium">"蜡纹"（冰纹）</p><p class="text-[13px] text-[#64748B]">蜡料凝固后在染色时开裂，形成自然天成的蜡纹，是蜡染的灵魂所在</p></div></div>
+                <div class="flex items-start gap-3"><span class="text-[#6366F1] text-lg">•</span><div><p class="text-[14px] text-[#312E81] font-medium">多层次防染</p><p class="text-[13px] text-[#64748B]">可通过多次上蜡、染色实现丰富的蓝色层次变化</p></div></div>
+                <div class="flex items-start gap-3"><span class="text-[#6366F1] text-lg">•</span><div><p class="text-[14px] text-[#312E81] font-medium">代表性的苗族工艺</p><p class="text-[13px] text-[#64748B]">湘西、贵州苗族蜡染是中国蜡染最具代表性的流派</p></div></div>
+              </div>
+            </div>
+          </div>
+          <div class="relative p-8 flex flex-col justify-center items-center text-center min-h-[400px] overflow-hidden">
+            <img src="images/image17.jpeg" alt="蜡染纹样" class="absolute inset-0 w-full h-full object-cover" loading="lazy" />
+            <div class="absolute inset-0 bg-gradient-to-br from-[#1a2e4d]/85 via-[#344a73]/75 to-[#5a6fb5]/85"></div>
+            <div class="text-white/20 text-[120px] font-serif mb-4 relative z-10">蜡</div>
+            <p class="text-white/80 text-[18px] leading-8 relative z-10">"蜡为笔，布为纸；<br>画尽苗家千年事。"</p>
+            <p class="text-[#A5B4FC] text-[14px] mt-4 relative z-10">— 贵州丹寨苗族蜡染艺谚</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 夹染工艺 -->
+      <div id="know-jiaran" class="know-content hidden">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+          <div class="bg-white card-shadow p-8">
+            <h2 class="font-serif text-[28px] font-bold text-[#312E81] mb-6">夹染工艺</h2>
+            <p class="text-[#64748B] leading-7 mb-6 text-[15px]">
+              夹染，古称"夹缬"，始于秦汉。用两块雕刻相同图案的木板将织物夹在中间进行防染，染液从雕板的孔洞渗入形成图案。夹染以其几何对称、线条清晰的纹样著称，是中国最古老的印染技术之一。
+            </p>
+            <div class="bg-[#EEF2FF] p-5">
+              <h3 class="font-serif text-[18px] font-semibold text-[#312E81] mb-3">工艺特色</h3>
+              <div class="space-y-3">
+                <div class="flex items-start gap-3"><span class="text-[#6366F1] text-lg">•</span><div><p class="text-[14px] text-[#312E81] font-medium">雕版防染</p><p class="text-[13px] text-[#64748B]">使用雕花木板夹紧织物，图案几何对称、边缘清晰锐利</p></div></div>
+                <div class="flex items-start gap-3"><span class="text-[#6366F1] text-lg">•</span><div><p class="text-[14px] text-[#312E81] font-medium">蓝印花布</p><p class="text-[13px] text-[#64748B]">江苏南通蓝印花布是夹染的代表性产品</p></div></div>
+                <div class="flex items-start gap-3"><span class="text-[#6366F1] text-lg">•</span><div><p class="text-[14px] text-[#312E81] font-medium">最早可追溯至秦汉</p><p class="text-[13px] text-[#64748B]">唐代盛行，后传入日本发展出"板缔"技法</p></div></div>
+              </div>
+            </div>
+          </div>
+          <div class="relative p-8 flex flex-col justify-center items-center text-center min-h-[400px] overflow-hidden">
+            <img src="images/image25.jpeg" alt="夹染纹样" class="absolute inset-0 w-full h-full object-cover" loading="lazy" />
+            <div class="absolute inset-0 bg-gradient-to-br from-[#152347]/85 via-[#2a3657]/75 to-[#4a5694]/85"></div>
+            <div class="text-white/20 text-[120px] font-serif mb-4 relative z-10">夹</div>
+            <p class="text-white/80 text-[18px] leading-8 relative z-10">"两板相夹，一染成花；<br>几何之美，千年不衰。"</p>
+            <p class="text-[#A5B4FC] text-[14px] mt-4 relative z-10">— 江苏南通蓝印花布技艺</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 传承人档案 -->
+      <div id="know-inheritor" class="know-content hidden">
+        <h2 class="font-serif text-[28px] font-bold text-[#312E81] mb-8 text-center">非遗传承人档案</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div class="bg-white card-shadow p-6"><div class="w-20 h-20 rounded-full bg-gradient-to-br from-[#312E81] to-[#6366F1] mx-auto mb-4 flex items-center justify-center"><span class="text-white font-serif text-[24px] font-bold">张</span></div><h3 class="font-serif text-[20px] font-bold text-[#312E81] text-center mb-2">张仕绅</h3><p class="text-[#64748B] text-[13px] text-center mb-1">白族扎染技艺</p><p class="text-[#64748B] text-[12px] text-center mb-4">国家级非遗传承人</p><p class="text-[#64748B] text-[14px] leading-6 text-center">云南大理周城人，自幼学习扎染技艺，擅长冰裂纹、蝴蝶花等传统图案，作品多次在国内外展览。</p></div>
+          <div class="bg-white card-shadow p-6"><div class="w-20 h-20 rounded-full bg-gradient-to-br from-[#312E81] to-[#6366F1] mx-auto mb-4 flex items-center justify-center"><span class="text-white font-serif text-[24px] font-bold">杨</span></div><h3 class="font-serif text-[20px] font-bold text-[#312E81] text-center mb-2">杨文琴</h3><p class="text-[#64748B] text-[13px] text-center mb-1">苗族蜡染技艺</p><p class="text-[#64748B] text-[12px] text-center mb-4">国家级非遗传承人</p><p class="text-[#64748B] text-[14px] leading-6 text-center">贵州丹寨人，精通苗族传统蜡染技艺，擅长绘制苗家图腾、花鸟图案，被誉为"蜡染皇后"。</p></div>
+          <div class="bg-white card-shadow p-6"><div class="w-20 h-20 rounded-full bg-gradient-to-br from-[#312E81] to-[#6366F1] mx-auto mb-4 flex items-center justify-center"><span class="text-white font-serif text-[24px] font-bold">吴</span></div><h3 class="font-serif text-[20px] font-bold text-[#312E81] text-center mb-2">吴元新</h3><p class="text-[#64748B] text-[13px] text-center mb-1">蓝印花布印染技艺</p><p class="text-[#64748B] text-[12px] text-center mb-4">国家级非遗传承人</p><p class="text-[#64748B] text-[14px] leading-6 text-center">江苏南通人，创立南通蓝印花布博物馆，抢救性收集传统花版千余片，培养新一代传承人。</p></div>
+        </div>
+      </div>
+
+      <!-- 非遗地图 -->
+      <div id="know-map" class="know-content hidden">
+        <h2 class="font-serif text-[28px] font-bold text-[#312E81] mb-8 text-center">非遗地图 · 蓝染文化地理分布</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="bg-white card-shadow p-6 hover:-translate-y-1 transition">
+            <div class="text-3xl mb-2">🏔️</div>
+            <h3 class="font-serif text-[20px] font-bold text-[#312E81] mb-3">云贵高原</h3>
+            <p class="text-[13px] text-[#64748B] leading-6 mb-3">扎染发源地之一，白族扎染技艺被列入国家级非物质文化遗产。周城被誉为"扎染之乡"。</p>
+            <span class="text-[12px] text-[#6366F1] font-medium">代表工艺：扎染</span>
+          </div>
+          <div class="bg-white card-shadow p-6 hover:-translate-y-1 transition">
+            <div class="text-3xl mb-2">🌿</div>
+            <h3 class="font-serif text-[20px] font-bold text-[#312E81] mb-3">湘西苗寨</h3>
+            <p class="text-[13px] text-[#64748B] leading-6 mb-3">苗族蜡染核心传承区域，蜡染图案以鸟鱼花蝶寓意吉祥，记录着苗族的历史记忆。</p>
+            <span class="text-[12px] text-[#6366F1] font-medium">代表工艺：蜡染</span>
+          </div>
+          <div class="bg-white card-shadow p-6 hover:-translate-y-1 transition">
+            <div class="text-3xl mb-2">🏯</div>
+            <h3 class="font-serif text-[20px] font-bold text-[#312E81] mb-3">江苏南通</h3>
+            <p class="text-[13px] text-[#64748B] leading-6 mb-3">蓝印花布核心产区，夹染技艺源于明清，以几何纹样和吉祥图案为主，曾广泛用于百姓生活。</p>
+            <span class="text-[12px] text-[#6366F1] font-medium">代表工艺：夹染</span>
+          </div>
+          <div class="bg-white card-shadow p-6 hover:-translate-y-1 transition">
+            <div class="text-3xl mb-2">🏘️</div>
+            <h3 class="font-serif text-[20px] font-bold text-[#312E81] mb-3">浙江温州</h3>
+            <p class="text-[13px] text-[#64748B] leading-6 mb-3">浙南蓝染历史悠久，以靛蓝染布闻名。温州地区保留有多处百年靛池遗址和传统染坊。</p>
+            <span class="text-[12px] text-[#6366F1] font-medium">代表工艺：靛蓝染</span>
+          </div>
+          <div class="bg-white card-shadow p-6 hover:-translate-y-1 transition">
+            <div class="text-3xl mb-2">🗻</div>
+            <h3 class="font-serif text-[20px] font-bold text-[#312E81] mb-3">四川自贡</h3>
+            <p class="text-[13px] text-[#64748B] leading-6 mb-3">自贡扎染为四川省级非遗，融合蜀地审美，纹样细腻多变，以"撮扎"技法独树一帜。</p>
+            <span class="text-[12px] text-[#6366F1] font-medium">代表工艺：扎染</span>
+          </div>
+          <div class="bg-white card-shadow p-6 hover:-translate-y-1 transition">
+            <div class="text-3xl mb-2">🏝️</div>
+            <h3 class="font-serif text-[20px] font-bold text-[#312E81] mb-3">中国台湾</h3>
+            <p class="text-[13px] text-[#64748B] leading-6 mb-3">台湾蓝染始于明清移民，三峡地区曾为蓝染重镇。近年以"蓝染复兴运动"推动工艺活化。</p>
+            <span class="text-[12px] text-[#6366F1] font-medium">代表工艺：蓝染</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ================================================================= -->
+<!-- 蓝染小游戏页 -->
+<!-- ================================================================= -->
+<div id="game-page" class="page-content pt-[72px]">
+  <!-- Hero -->
+  <section class="hero-gradient pattern-tie py-12 px-6 text-center">
+    <h1 class="font-serif text-[36px] font-bold text-white mb-3">🎮 蓝染体验小游戏</h1>
+    <p class="text-[#C7D2FE] text-[16px]">亲手体验扎染的魅力 — 从绑布到染色再到展开，感受传统工艺的奇妙</p>
+  </section>
+
+  <section class="w-full px-6 py-12 pattern-fabric">
+    <div class="max-w-[900px] mx-auto">
+      <!-- 游戏模式选择 -->
+      <div class="flex gap-4 justify-center mb-10 flex-wrap">
+        <button class="game-mode-btn px-6 py-3 bg-[#6366F1] text-white text-[15px] font-medium transition" onclick="switchGame('tie')" data-mode="tie">🎀 扎染模拟</button>
+        <button class="game-mode-btn px-6 py-3 bg-[#EEF2FF] text-[#64748B] text-[15px] transition" onclick="switchGame('diy')" data-mode="diy">🎨 AI染布模拟器</button>
+      </div>
+
+      <!-- 扎染模拟游戏 -->
+      <div id="game-tie" class="game-content">
+        <div class="bg-white card-shadow p-8 rounded-lg">
+          <!-- 步骤指示器 -->
+          <div class="flex justify-between items-center mb-6">
+            <div><span class="text-[14px] font-semibold text-[#312E81]">当前步骤：</span><span id="game-step-label" class="text-[14px] font-bold text-[#6366F1]">Step 1 — 扎结布料</span></div>
+            <div class="flex gap-2" id="game-steps-indicator">
+              <span class="step-dot w-8 h-8 rounded-full bg-[#6366F1] text-white text-[11px] flex items-center justify-center font-bold">1</span>
+              <span class="step-dot w-8 h-8 rounded-full bg-[#C7D2FE] text-[#64748B] text-[11px] flex items-center justify-center font-bold">2</span>
+              <span class="step-dot w-8 h-8 rounded-full bg-[#C7D2FE] text-[#64748B] text-[11px] flex items-center justify-center font-bold">3</span>
+              <span class="step-dot w-8 h-8 rounded-full bg-[#C7D2FE] text-[#64748B] text-[11px] flex items-center justify-center font-bold">4</span>
+            </div>
+          </div>
+
+          <!-- 游戏画布区域 -->
+          <div class="w-full min-h-[340px] rounded-lg mb-6 relative overflow-hidden border-2 border-[#E0E7FF]" id="game-canvas" style="background: linear-gradient(135deg, #F8FAFC 0%, #EEF2FF 100%);">
+            <div id="game-visual" class="text-center py-8">
+              <!-- Step 1: 扎结 -->
+              <div id="game-step1" class="animate-[fadeIn_0.5s]">
+                <div class="inline-block mb-4 px-4 py-2 bg-[#EEF2FF] rounded-full">
+                  <span class="text-[13px] text-[#6366F1] font-medium">🧵 在布料上扎出花纹</span>
+                </div>
+                <p class="text-[#312E81] font-serif text-[22px] font-bold mb-2">扎结布料</p>
+                <p class="text-[#64748B] text-[14px] mb-5">点击下方扎结点，扎得越多花纹越精细（至少3个）</p>
+                <!-- 布料视觉 -->
+                <div class="relative w-[280px] h-[140px] mx-auto mb-4 bg-gradient-to-br from-[#F8FAFC] to-[#E0E7FF] rounded-lg border-2 border-dashed border-[#C7D2FE] flex items-center justify-center overflow-hidden">
+                  <div class="absolute inset-0 pattern-fabric opacity-50"></div>
+                  <div class="flex justify-center gap-2 flex-wrap max-w-[260px] relative z-10" id="tie-points">
+                    <button class="tie-point w-11 h-11 rounded-full bg-[#EEF2FF] border-2 border-dashed border-[#C7D2FE] hover:bg-[#6366F1] hover:border-[#6366F1] hover:text-white text-[#64748B] transition text-xs font-bold cursor-pointer" onclick="tieKnot(this)">扎</button>
+                    <button class="tie-point w-11 h-11 rounded-full bg-[#EEF2FF] border-2 border-dashed border-[#C7D2FE] hover:bg-[#6366F1] hover:border-[#6366F1] hover:text-white text-[#64748B] transition text-xs font-bold cursor-pointer" onclick="tieKnot(this)">扎</button>
+                    <button class="tie-point w-11 h-11 rounded-full bg-[#EEF2FF] border-2 border-dashed border-[#C7D2FE] hover:bg-[#6366F1] hover:border-[#6366F1] hover:text-white text-[#64748B] transition text-xs font-bold cursor-pointer" onclick="tieKnot(this)">扎</button>
+                    <button class="tie-point w-11 h-11 rounded-full bg-[#EEF2FF] border-2 border-dashed border-[#C7D2FE] hover:bg-[#6366F1] hover:border-[#6366F1] hover:text-white text-[#64748B] transition text-xs font-bold cursor-pointer" onclick="tieKnot(this)">扎</button>
+                    <button class="tie-point w-11 h-11 rounded-full bg-[#EEF2FF] border-2 border-dashed border-[#C7D2FE] hover:bg-[#6366F1] hover:border-[#6366F1] hover:text-white text-[#64748B] transition text-xs font-bold cursor-pointer" onclick="tieKnot(this)">扎</button>
+                    <button class="tie-point w-11 h-11 rounded-full bg-[#EEF2FF] border-2 border-dashed border-[#C7D2FE] hover:bg-[#6366F1] hover:border-[#6366F1] hover:text-white text-[#64748B] transition text-xs font-bold cursor-pointer" onclick="tieKnot(this)">扎</button>
+                    <button class="tie-point w-11 h-11 rounded-full bg-[#EEF2FF] border-2 border-dashed border-[#C7D2FE] hover:bg-[#6366F1] hover:border-[#6366F1] hover:text-white text-[#64748B] transition text-xs font-bold cursor-pointer" onclick="tieKnot(this)">扎</button>
+                    <button class="tie-point w-11 h-11 rounded-full bg-[#EEF2FF] border-2 border-dashed border-[#C7D2FE] hover:bg-[#6366F1] hover:border-[#6366F1] hover:text-white text-[#64748B] transition text-xs font-bold cursor-pointer" onclick="tieKnot(this)">扎</button>
+                  </div>
+                </div>
+                <p class="text-[12px] text-[#94A3B8] mt-2"><span id="knot-count">0</span> / 8 个扎结点已扎</p>
+              </div>
+              <!-- Step 2: 浸染 -->
+              <div id="game-step2" class="hidden">
+                <div class="inline-block mb-4 px-4 py-2 bg-[#EEF2FF] rounded-full">
+                  <span class="text-[13px] text-[#6366F1] font-medium">🪣 将扎好的布放入靛蓝染缸</span>
+                </div>
+                <p class="text-[#312E81] font-serif text-[22px] font-bold mb-2">浸染上色</p>
+                <p class="text-[#64748B] text-[14px] mb-5">布料已扎好 <span id="knot-display" class="text-[#6366F1] font-bold">0</span> 个结，准备染色</p>
+                <!-- 染缸视觉 -->
+                <div class="relative w-[200px] h-[160px] mx-auto mb-4">
+                  <div class="absolute bottom-0 w-full h-[120px] rounded-b-lg bg-gradient-to-b from-[#312E81] to-[#1E1B4B] border-2 border-[#312E81] overflow-hidden">
+                    <div class="absolute top-0 left-0 right-0 h-2 bg-[#6366F1]/30 animate-pulse"></div>
+                    <div class="absolute top-4 left-3 w-4 h-4 rounded-full bg-[#818CF8]/30 animate-bounce" style="animation-delay:0.2s"></div>
+                    <div class="absolute top-8 right-4 w-3 h-3 rounded-full bg-[#818CF8]/20 animate-bounce" style="animation-delay:0.5s"></div>
+                    <div class="absolute bottom-6 left-6 w-5 h-5 rounded-full bg-[#818CF8]/20 animate-bounce" style="animation-delay:0.8s"></div>
+                  </div>
+                  <div class="absolute top-0 left-1/2 -translate-x-1/2 text-[40px]">🧶</div>
+                </div>
+                <button class="px-8 py-2.5 bg-[#6366F1] text-white text-sm font-medium hover:opacity-90 transition rounded-lg" onclick="doDye()">🫗 开始染色</button>
+              </div>
+              <!-- Step 3: 染色中 -->
+              <div id="game-step3" class="hidden">
+                <div class="inline-block mb-4 px-4 py-2 bg-[#312E81] rounded-full">
+                  <span class="text-[13px] text-[#C7D2FE] font-medium">⏳ 染色进行中...</span>
+                </div>
+                <p class="text-[#312E81] font-serif text-[22px] font-bold mb-4">染色中</p>
+                <div class="relative w-[200px] h-[120px] mx-auto mb-4">
+                  <div class="absolute inset-0 rounded-lg bg-gradient-to-b from-[#312E81] to-[#1E1B4B] overflow-hidden">
+                    <div class="absolute top-2 left-4 w-6 h-6 rounded-full bg-[#818CF8]/30 animate-ping"></div>
+                    <div class="absolute top-8 right-6 w-4 h-4 rounded-full bg-[#818CF8]/20 animate-ping" style="animation-delay:0.3s"></div>
+                    <div class="absolute bottom-4 left-8 w-5 h-5 rounded-full bg-[#818CF8]/25 animate-ping" style="animation-delay:0.6s"></div>
+                  </div>
+                </div>
+                <div class="w-48 h-3 bg-[#EEF2FF] mx-auto rounded-full overflow-hidden">
+                  <div id="dye-progress" class="h-full bg-gradient-to-r from-[#312E81] to-[#6366F1] rounded-full transition-all duration-300" style="width:0%"></div>
+                </div>
+                <p class="text-[#64748B] text-[13px] mt-3">靛蓝染液正在渗透布料纤维...</p>
+              </div>
+              <!-- Step 4: 展开成品 -->
+              <div id="game-step4" class="hidden">
+                <div class="inline-block mb-4 px-4 py-2 bg-[#C9A96E]/20 rounded-full">
+                  <span class="text-[13px] text-[#C9A96E] font-medium">✨ 染色完成！</span>
+                </div>
+                <p class="text-[#312E81] font-serif text-[22px] font-bold mb-2">展开成品！</p>
+                <div class="relative w-[220px] h-[220px] mx-auto mb-4 rounded-lg overflow-hidden border-4 border-[#C7D2FE] shadow-lg" id="final-pattern-wrap">
+                  <img id="final-pattern-img" src="images/image34.jpeg" alt="扎染成品" class="w-full h-full object-cover" />
+                  <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+                </div>
+                <p class="text-[#C9A96E] text-[16px] font-serif font-bold mb-1">🎉 恭喜完成扎染作品！</p>
+                <p id="final-pattern-desc" class="text-[#64748B] text-[13px] mb-4">扎结 3 点 · 冰裂纹扎染纹样</p>
+                <div class="flex gap-3 justify-center">
+                  <button class="px-5 py-2 bg-[#6366F1] text-white text-sm font-medium hover:opacity-90 transition rounded-lg" onclick="resetGame()">🔄 再来一次</button>
+                  <button class="px-5 py-2 bg-[#EEF2FF] text-[#312E81] text-sm font-medium hover:bg-[#E0E7FF] transition rounded-lg" onclick="showPage('database')">📋 查看更多纹样</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="text-center">
+            <button id="game-next-btn" class="px-8 py-3 bg-[#6366F1] text-white text-[15px] font-medium hover:opacity-90 transition disabled:opacity-40 disabled:cursor-not-allowed rounded-lg" onclick="gameNextStep()" disabled>进入下一步 →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI染布模拟器 -->
+      <div id="game-diy" class="game-content hidden">
+        <div class="bg-white card-shadow p-8 rounded-lg">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div>
+              <h3 class="font-serif text-[20px] font-bold text-[#312E81] mb-2">调节参数</h3>
+              <p class="text-[13px] text-[#64748B] mb-6">调整布料、染料与扎法，模拟不同染色效果</p>
+              <div class="space-y-5">
+                <div><label class="text-[14px] font-semibold text-[#312E81] block mb-2">布料类型</label>
+                  <select id="fabric-type" class="w-full h-11 px-3 bg-[#EEF2FF] text-[14px] text-[#64748B] outline-none rounded-lg cursor-pointer" onchange="updateSimulator()">
+                    <option value="cotton">棉布 — 吸色均匀</option>
+                    <option value="silk">丝绸 — 光泽细腻</option>
+                    <option value="linen">麻布 — 纹理粗犷</option>
+                    <option value="wool">羊毛 — 蓬松渗透</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="text-[14px] font-semibold text-[#312E81] flex justify-between mb-2"><span>染料浓度</span><span id="dye-label" class="text-[#6366F1] font-medium">50%</span></label>
+                  <div class="relative h-2 bg-[#EEF2FF] cursor-pointer rounded-full" onclick="setSlider(this, 'dye', event); updateSimulator()"><div id="dye-fill" class="absolute left-0 top-0 h-full bg-[#6366F1] rounded-full" style="width:50%"></div></div>
+                </div>
+                <div>
+                  <label class="text-[14px] font-semibold text-[#312E81] flex justify-between mb-2"><span>扎法密度</span><span id="knot-label" class="text-[#818CF8] font-medium">60%</span></label>
+                  <div class="relative h-2 bg-[#EEF2FF] cursor-pointer rounded-full" onclick="setSlider(this, 'knot', event); updateSimulator()"><div id="knot-fill" class="absolute left-0 top-0 h-full bg-[#818CF8] rounded-full" style="width:60%"></div></div>
+                </div>
+                <div>
+                  <label class="text-[14px] font-semibold text-[#312E81] flex justify-between mb-2"><span>浸泡时间</span><span id="soak-label" class="text-[#6366F1] font-medium">40%</span></label>
+                  <div class="relative h-2 bg-[#EEF2FF] cursor-pointer rounded-full" onclick="setSlider(this, 'soak', event); updateSimulator()"><div id="soak-fill" class="absolute left-0 top-0 h-full bg-[#6366F1] rounded-full" style="width:40%"></div></div>
+                </div>
+                <button onclick="simulateDye()" class="w-full h-12 bg-[#6366F1] text-white text-[15px] font-medium hover:opacity-90 transition rounded-lg flex items-center justify-center gap-2">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  生成模拟效果
+                </button>
+              </div>
+            </div>
+            <div class="flex flex-col items-center justify-center bg-[#EEF2FF] rounded-lg min-h-[340px] pattern-batik p-6">
+              <div id="simulator-result" class="text-center">
+                <div class="text-[60px] mb-3">🟦</div>
+                <p class="text-[#64748B] text-[14px]">调整参数后点击生成按钮<br>查看模拟染色效果</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ================================================================= -->
+<!-- 数字展览馆页 -->
+<!-- ================================================================= -->
+<div id="exhibition-page" class="page-content pt-[72px]">
+  <!-- 展览Hero -->
+  <section class="hero-gradient2 pattern-exhibit py-16 px-6 text-center relative overflow-hidden">
+    <h1 class="font-serif text-[36px] md:text-[48px] font-bold text-white mb-4 relative z-10">数字展览馆</h1>
+    <p class="text-[#C7D2FE] text-[16px] max-w-[600px] mx-auto mb-8 relative z-10">滑动浏览蓝染纹样精品，每件作品都有它独特的故事</p>
+    <div class="flex gap-3 justify-center flex-wrap relative z-10">
+      <button class="exhibit-tab px-5 py-2.5 bg-white/20 text-white text-[14px] font-medium" onclick="switchExhibit('featured')">精选纹样</button>
+      <button class="exhibit-tab px-5 py-2.5 bg-white/10 text-white/80 text-[14px]" onclick="switchExhibit('story')">纹样故事</button>
+      <button class="exhibit-tab px-5 py-2.5 bg-white/10 text-white/80 text-[14px]" onclick="switchExhibit('daily')">每日推荐</button>
+    </div>
+  </section>
+
+  <!-- 展览内容 -->
+  <section class="w-full px-6 py-16 pattern-border">
+    <div class="max-w-[1300px] mx-auto">
+      <!-- 精选纹样画廊 -->
+      <div id="exhibit-featured" class="exhibit-content">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div class="bg-white card-shadow overflow-hidden group cursor-pointer">
+            <div class="h-[400px] relative flex items-center justify-center overflow-hidden"><img src="images/image18.jpeg" alt="蝴蝶纹·藤蔓纹" class="w-full h-full object-cover img-zoom" loading="lazy" />
+              <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition bg-black/20 flex items-center justify-center">
+                <span class="text-white text-sm font-medium bg-white/20 px-6 py-3">🔍 全屏查看</span>
+              </div>
+              <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#1e2143]/90 to-transparent p-8">
+                <h3 class="font-serif text-[24px] font-bold text-white mb-2">《冰裂》— 云贵高原经典</h3>
+                <p class="text-[#C7D2FE] text-[14px]">扎染 · 白族传统纹样 · 云南大理</p>
+              </div>
+            </div>
+          </div>
+          <div class="bg-white card-shadow overflow-hidden group cursor-pointer">
+            <div class="h-[400px] relative flex items-center justify-center overflow-hidden"><img src="images/image19.jpeg" alt="鱼纹·水波纹" class="w-full h-full object-cover img-zoom" loading="lazy" />
+              <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition bg-black/20 flex items-center justify-center">
+                <span class="text-white text-sm font-medium bg-white/20 px-6 py-3">🔍 全屏查看</span>
+              </div>
+              <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#1a2e4d]/90 to-transparent p-8">
+                <h3 class="font-serif text-[24px] font-bold text-white mb-2">《苗绣》— 湘西苗族蜡染</h3>
+                <p class="text-[#C7D2FE] text-[14px]">蜡染 · 苗族图腾 · 贵州丹寨</p>
+              </div>
+            </div>
+          </div>
+          <div class="bg-white card-shadow overflow-hidden group cursor-pointer">
+            <div class="h-[300px] relative flex items-center justify-center overflow-hidden"><img src="images/image20.jpeg" alt="八角纹·菱形纹" class="w-full h-full object-cover img-zoom" loading="lazy" />
+              <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition bg-black/20 flex items-center justify-center">
+                <span class="text-white text-sm font-medium bg-white/20 px-6 py-3">🔍 全屏查看</span>
+              </div>
+              <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#152347]/90 to-transparent p-6">
+                <h3 class="font-serif text-[20px] font-bold text-white mb-1">《如意》— 南通蓝印花布</h3>
+                <p class="text-[#C7D2FE] text-[13px]">夹染 · 吉祥纹样 · 江苏南通</p>
+              </div>
+            </div>
+          </div>
+          <div class="bg-white card-shadow overflow-hidden group cursor-pointer">
+            <div class="h-[300px] relative flex items-center justify-center overflow-hidden"><img src="images/image21.jpeg" alt="缠枝花·牡丹纹" class="w-full h-full object-cover img-zoom" loading="lazy" />
+              <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition bg-black/20 flex items-center justify-center">
+                <span class="text-white text-sm font-medium bg-white/20 px-6 py-3">🔍 全屏查看</span>
+              </div>
+              <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#242b52]/90 to-transparent p-6">
+                <h3 class="font-serif text-[20px] font-bold text-white mb-1">《蜀韵》— 四川自贡扎染</h3>
+                <p class="text-[#C7D2FE] text-[13px]">扎染 · 撮扎技法 · 四川自贡</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 纹样故事 -->
+      <div id="exhibit-story" class="exhibit-content hidden">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="bg-white card-shadow p-6 hover:-translate-y-1 transition">
+            <div class="h-48 relative mb-4 rounded overflow-hidden flex items-center justify-center"><img src="images/image22.jpeg" alt="莲花纹·团花纹" class="w-full h-full object-cover img-zoom" loading="lazy" />
+              <span class="text-white/50 text-[60px]">❄️</span>
+            </div>
+            <span class="text-[12px] text-[#C9A96E] font-medium">纹样故事 #1</span>
+            <h3 class="font-serif text-[20px] font-bold text-[#312E81] mt-1 mb-3">冰裂纹的千年密码</h3>
+            <p class="text-[#64748B] text-[14px] leading-6">冰裂纹是扎染最具代表性的纹样之一。当线绳紧紧扎住布料放入染缸时，靛蓝染液沿着布的褶皱渗入，在拆线后形成如冰裂般的自然纹理...</p>
+            <button class="mt-4 text-[13px] text-[#6366F1] font-medium hover:opacity-80" onclick="showStoryDetail(0)">阅读全文 →</button>
+          </div>
+          <div class="bg-white card-shadow p-6 hover:-translate-y-1 transition">
+            <div class="h-48 relative mb-4 rounded overflow-hidden flex items-center justify-center"><img src="images/image23.jpeg" alt="蝴蝶纹·藤蔓纹" class="w-full h-full object-cover img-zoom" loading="lazy" />
+              <span class="text-white/50 text-[60px]">🦋</span>
+            </div>
+            <span class="text-[12px] text-[#C9A96E] font-medium">纹样故事 #2</span>
+            <h3 class="font-serif text-[20px] font-bold text-[#312E81] mt-1 mb-3">苗族蝴蝶妈妈的传说</h3>
+            <p class="text-[#64748B] text-[14px] leading-6">在苗族蜡染中，蝴蝶纹样有着特殊地位。苗族古歌传颂"蝴蝶妈妈"是人类的始祖，蜡染中的蝴蝶纹样世代相传...</p>
+            <button class="mt-4 text-[13px] text-[#6366F1] font-medium hover:opacity-80" onclick="showStoryDetail(1)">阅读全文 →</button>
+          </div>
+          <div class="bg-white card-shadow p-6 hover:-translate-y-1 transition">
+            <div class="h-48 relative mb-4 rounded overflow-hidden flex items-center justify-center"><img src="images/image24.jpeg" alt="鱼纹·水波纹" class="w-full h-full object-cover img-zoom" loading="lazy" />
+              <span class="text-white/50 text-[60px]">🌊</span>
+            </div>
+            <span class="text-[12px] text-[#C9A96E] font-medium">纹样故事 #3</span>
+            <h3 class="font-serif text-[20px] font-bold text-[#312E81] mt-1 mb-3">水波纹与农耕文明</h3>
+            <p class="text-[#64748B] text-[14px] leading-6">水波纹样是蓝印花布中最古老的纹饰之一，源于农耕社会对水的依赖和崇拜。连续的波浪线条象征着生生不息的生命力...</p>
+            <button class="mt-4 text-[13px] text-[#6366F1] font-medium hover:opacity-80" onclick="showStoryDetail(2)">阅读全文 →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 每日推荐展览 -->
+      <div id="exhibit-daily" class="exhibit-content hidden">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="bg-white card-shadow p-6 flex gap-6 items-start">
+            <div class="w-36 h-36 shrink-0 relative rounded overflow-hidden flex items-center justify-center"><img src="images/image25.jpeg" alt="八角纹·菱形纹" class="w-full h-full object-cover img-zoom" loading="lazy" />
+              <span class="text-white/50 text-[40px]">📅</span>
+            </div>
+            <div class="flex-1">
+              <span class="text-[12px] text-[#C9A96E] font-medium">今日 · 6月18日</span>
+              <h3 class="font-serif text-[20px] font-bold text-[#312E81] mt-1 mb-2">每日纹样：如意云纹</h3>
+              <p class="text-[#64748B] text-[14px] leading-6">如意云纹是中国传统吉祥纹样之一，"如意"寓意"如人心意"，云纹则象征高升和如意...</p>
+              <div class="flex gap-2 mt-3">
+                <span class="inline-block px-3 py-1 bg-[#EEF2FF] text-[12px] text-[#6366F1] font-medium">夹染 · 江苏南通</span>
+                <button class="text-[13px] text-[#6366F1] font-medium hover:opacity-80" onclick="showDailyDetail(0)">阅读全文 →</button>
+              </div>
+            </div>
+          </div>
+          <div class="bg-white card-shadow p-6 flex gap-6 items-start">
+            <div class="w-36 h-36 shrink-0 relative rounded overflow-hidden flex items-center justify-center"><img src="images/image26.jpeg" alt="缠枝花·牡丹纹" class="w-full h-full object-cover img-zoom" loading="lazy" />
+              <span class="text-white/50 text-[40px]">🔮</span>
+            </div>
+            <div class="flex-1">
+              <span class="text-[12px] text-[#C9A96E] font-medium">每日关键词</span>
+              <h3 class="font-serif text-[20px] font-bold text-[#312E81] mt-1 mb-2">螺旋纹 + 蜡染法</h3>
+              <p class="text-[#64748B] text-[14px] leading-6">漩涡状的螺旋纹在苗族蜡染中寓意宇宙的循环与生命的轮回...</p>
+              <div class="flex gap-2 mt-3">
+                <button class="px-4 py-2 bg-[#6366F1] text-white text-[13px] font-medium hover:opacity-90 transition" onclick="showPage('generate');document.getElementById('keywords').value='蜡染法+螺旋纹';setTimeout(()=>generatePatterns(),300)">🎨 用此关键词生成</button>
+                <button class="text-[13px] text-[#6366F1] font-medium hover:opacity-80" onclick="showDailyDetail(1)">阅读全文 →</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ================================================================= -->
+<!-- JavaScript -->
+<!-- ================================================================= -->
+<script>
+// ===== 数据库数据 =====
+const DB_PATTERNS = [
+  { name:'缠枝花·牡丹纹', craft:'蓝印花布', region:'江苏', desc:'蓝印花布 · 靛蓝 / 蓝白 · 缠枝花', color:'靛蓝 / 蓝白', img:'images/image6.jpeg', keywords:'缠枝花、牡丹纹、如意纹、四方连续、轴对称、硬边防染、蓝印花布、靛蓝/蓝白' },
+  { name:'莲花纹·团花纹', craft:'蓝印花布', region:'江苏', desc:'蓝印花布 · 深蓝 / 白 · 莲花纹', color:'深蓝 / 白', img:'images/image7.jpeg', keywords:'莲花纹、团花纹、回纹、中心对称、适合纹样、规则重复、蓝印花布、深蓝/白' },
+  { name:'蝴蝶纹·藤蔓纹', craft:'蓝印花布', region:'江苏', desc:'蓝印花布 · 青蓝 / 白 · 蝴蝶纹', color:'青蓝 / 白', img:'images/image8.jpeg', keywords:'蝴蝶纹、藤蔓纹、折枝花、二方连续、边饰纹样、直线型、蓝印花布、青蓝/白' },
+  { name:'鱼纹·水波纹', craft:'蓝印花布', region:'江苏', desc:'蓝印花布 · 群青 / 蓝白 · 鱼纹', color:'群青 / 蓝白', img:'images/image9.jpeg', keywords:'鱼纹、水波纹、连年有余纹、满地式、曲线型、中密度、蓝印花布、群青/蓝白' },
+  { name:'八角纹·菱形纹', craft:'蓝印花布', region:'江苏', desc:'蓝印花布 · 藏蓝 / 浅蓝 · 八角纹', color:'藏蓝 / 浅蓝', img:'images/image10.jpeg', keywords:'八角纹、菱形纹、几何纹、四方连续、轴对称、硬边防染、蓝印花布、藏蓝/浅蓝' },
+  { name:'缠枝花·牡丹纹', craft:'蓝印花布', region:'江苏', desc:'蓝印花布 · 靛蓝 / 蓝白 · 缠枝花', color:'靛蓝 / 蓝白', img:'images/image11.jpeg', keywords:'缠枝花、牡丹纹、如意纹、中心对称、适合纹样、规则重复、蓝印花布、靛蓝/蓝白' },
+  { name:'莲花纹·团花纹', craft:'蓝印花布', region:'江苏', desc:'蓝印花布 · 深蓝 / 白 · 莲花纹', color:'深蓝 / 白', img:'images/image12.jpeg', keywords:'莲花纹、团花纹、回纹、二方连续、边饰纹样、直线型、蓝印花布、深蓝/白' },
+  { name:'蝴蝶纹·藤蔓纹', craft:'蓝印花布', region:'江苏', desc:'蓝印花布 · 青蓝 / 白 · 蝴蝶纹', color:'青蓝 / 白', img:'images/image13.jpeg', keywords:'蝴蝶纹、藤蔓纹、折枝花、满地式、曲线型、中密度、蓝印花布、青蓝/白' },
+  { name:'鱼纹·水波纹', craft:'蓝印花布', region:'江苏', desc:'蓝印花布 · 群青 / 蓝白 · 鱼纹', color:'群青 / 蓝白', img:'images/image14.jpeg', keywords:'鱼纹、水波纹、连年有余纹、四方连续、轴对称、硬边防染、蓝印花布、群青/蓝白' },
+  { name:'八角纹·菱形纹', craft:'蓝印花布', region:'江苏', desc:'蓝印花布 · 藏蓝 / 浅蓝 · 八角纹', color:'藏蓝 / 浅蓝', img:'images/image15.jpeg', keywords:'八角纹、菱形纹、几何纹、中心对称、适合纹样、规则重复、蓝印花布、藏蓝/浅蓝' },
+  { name:'缠枝花·牡丹纹', craft:'蓝印花布', region:'江苏', desc:'蓝印花布 · 靛蓝 / 蓝白 · 缠枝花', color:'靛蓝 / 蓝白', img:'images/image16.jpeg', keywords:'缠枝花、牡丹纹、如意纹、二方连续、边饰纹样、直线型、蓝印花布、靛蓝/蓝白' },
+  { name:'莲花纹·团花纹', craft:'蓝印花布', region:'江苏', desc:'蓝印花布 · 深蓝 / 白 · 莲花纹', color:'深蓝 / 白', img:'images/image17.jpeg', keywords:'莲花纹、团花纹、回纹、满地式、曲线型、中密度、蓝印花布、深蓝/白' },
+  { name:'蝴蝶纹·藤蔓纹', craft:'蓝印花布', region:'江苏', desc:'蓝印花布 · 青蓝 / 白 · 蝴蝶纹', color:'青蓝 / 白', img:'images/image18.jpeg', keywords:'蝴蝶纹、藤蔓纹、折枝花、四方连续、轴对称、硬边防染、蓝印花布、青蓝/白' },
+  { name:'鱼纹·水波纹', craft:'蓝印花布', region:'江苏', desc:'蓝印花布 · 群青 / 蓝白 · 鱼纹', color:'群青 / 蓝白', img:'images/image19.jpeg', keywords:'鱼纹、水波纹、连年有余纹、中心对称、适合纹样、规则重复、蓝印花布、群青/蓝白' },
+  { name:'八角纹·菱形纹', craft:'蓝印花布', region:'江苏', desc:'蓝印花布 · 藏蓝 / 浅蓝 · 八角纹', color:'藏蓝 / 浅蓝', img:'images/image20.jpeg', keywords:'八角纹、菱形纹、几何纹、二方连续、边饰纹样、直线型、蓝印花布、藏蓝/浅蓝' },
+  { name:'缠枝花·牡丹纹', craft:'蓝印花布', region:'江苏', desc:'蓝印花布 · 靛蓝 / 蓝白 · 缠枝花', color:'靛蓝 / 蓝白', img:'images/image21.jpeg', keywords:'缠枝花、牡丹纹、如意纹、满地式、曲线型、中密度、蓝印花布、靛蓝/蓝白' },
+  { name:'莲花纹·团花纹', craft:'蓝印花布', region:'江苏', desc:'蓝印花布 · 深蓝 / 白 · 莲花纹', color:'深蓝 / 白', img:'images/image22.jpeg', keywords:'莲花纹、团花纹、回纹、四方连续、轴对称、硬边防染、蓝印花布、深蓝/白' },
+  { name:'蝴蝶纹·藤蔓纹', craft:'蓝印花布', region:'江苏', desc:'蓝印花布 · 青蓝 / 白 · 蝴蝶纹', color:'青蓝 / 白', img:'images/image23.jpeg', keywords:'蝴蝶纹、藤蔓纹、折枝花、中心对称、适合纹样、规则重复、蓝印花布、青蓝/白' },
+  { name:'鱼纹·水波纹', craft:'蓝印花布', region:'江苏', desc:'蓝印花布 · 群青 / 蓝白 · 鱼纹', color:'群青 / 蓝白', img:'images/image24.jpeg', keywords:'鱼纹、水波纹、连年有余纹、二方连续、边饰纹样、直线型、蓝印花布、群青/蓝白' },
+  { name:'八角纹·菱形纹', craft:'蓝印花布', region:'江苏', desc:'蓝印花布 · 藏蓝 / 浅蓝 · 八角纹', color:'藏蓝 / 浅蓝', img:'images/image25.jpeg', keywords:'八角纹、菱形纹、几何纹、满地式、曲线型、中密度、蓝印花布、藏蓝/浅蓝' },
+  { name:'缠枝花·牡丹纹', craft:'蓝印花布', region:'江苏', desc:'蓝印花布 · 靛蓝 / 蓝白 · 缠枝花', color:'靛蓝 / 蓝白', img:'images/image26.jpeg', keywords:'缠枝花、牡丹纹、如意纹、四方连续、轴对称、硬边防染、蓝印花布、靛蓝/蓝白' },
+  { name:'莲花纹·团花纹', craft:'蓝印花布', region:'江苏', desc:'蓝印花布 · 深蓝 / 白 · 莲花纹', color:'深蓝 / 白', img:'images/image27.jpeg', keywords:'莲花纹、团花纹、回纹、中心对称、适合纹样、规则重复、蓝印花布、深蓝/白' },
+  { name:'蝴蝶纹·藤蔓纹', craft:'蓝印花布', region:'江苏', desc:'蓝印花布 · 青蓝 / 白 · 蝴蝶纹', color:'青蓝 / 白', img:'images/image28.jpeg', keywords:'蝴蝶纹、藤蔓纹、折枝花、二方连续、边饰纹样、直线型、蓝印花布、青蓝/白' },
+  { name:'鱼纹·水波纹', craft:'蓝印花布', region:'江苏', desc:'蓝印花布 · 群青 / 蓝白 · 鱼纹', color:'群青 / 蓝白', img:'images/image29.jpeg', keywords:'鱼纹、水波纹、连年有余纹、满地式、曲线型、中密度、蓝印花布、群青/蓝白' },
+  { name:'八角纹·菱形纹', craft:'蓝印花布', region:'江苏', desc:'蓝印花布 · 藏蓝 / 浅蓝 · 八角纹', color:'藏蓝 / 浅蓝', img:'images/image30.jpeg', keywords:'八角纹、菱形纹、几何纹、四方连续、轴对称、硬边防染、蓝印花布、藏蓝/浅蓝' },
+  { name:'缠枝花·牡丹纹', craft:'蓝印花布', region:'江苏', desc:'蓝印花布 · 靛蓝 / 蓝白 · 缠枝花', color:'靛蓝 / 蓝白', img:'images/image31.jpeg', keywords:'缠枝花、牡丹纹、如意纹、中心对称、适合纹样、规则重复、蓝印花布、靛蓝/蓝白' },
+  { name:'莲花纹·团花纹', craft:'蓝印花布', region:'江苏', desc:'蓝印花布 · 深蓝 / 白 · 莲花纹', color:'深蓝 / 白', img:'images/image32.jpeg', keywords:'莲花纹、团花纹、回纹、二方连续、边饰纹样、直线型、蓝印花布、深蓝/白' },
+  { name:'蝴蝶纹·藤蔓纹', craft:'蓝印花布', region:'江苏', desc:'蓝印花布 · 青蓝 / 白 · 蝴蝶纹', color:'青蓝 / 白', img:'images/image33.jpeg', keywords:'蝴蝶纹、藤蔓纹、折枝花、满地式、曲线型、中密度、蓝印花布、青蓝/白' },
+  { name:'云纹·雨点纹', craft:'扎染', region:'云贵', desc:'扎染 · 群青 / 蓝白 · 云纹', color:'群青 / 蓝白', img:'images/image34.jpeg', keywords:'云纹、雨点纹、晕染纹、中心对称、软边晕染、放射扩展、扎染、群青/蓝白' },
+  { name:'山形纹·折线纹', craft:'扎染', region:'云贵', desc:'扎染 · 藏蓝 / 浅蓝 · 山形纹', color:'藏蓝 / 浅蓝', img:'images/image35.jpeg', keywords:'山形纹、折线纹、抽象纹、非对称、渗化边缘、自由重复、扎染、藏蓝/浅蓝' },
+  { name:'晕染纹·圆点纹', craft:'扎染', region:'云贵', desc:'扎染 · 靛蓝 / 蓝白 · 晕染纹', color:'靛蓝 / 蓝白', img:'images/image36.jpeg', keywords:'晕染纹、圆点纹、随机结染纹、轴对称、圆点重复、软边晕染、扎染、靛蓝/蓝白' },
+  { name:'水波纹·涡旋纹', craft:'扎染', region:'云贵', desc:'扎染 · 深蓝 / 白 · 水波纹', color:'深蓝 / 白', img:'images/image37.jpeg', keywords:'水波纹、涡旋纹、肌理纹、满地式、随机分布、高曲率、扎染、深蓝/白' },
+  { name:'放射纹·圆点纹', craft:'扎染', region:'云贵', desc:'扎染 · 青蓝 / 白 · 放射纹', color:'青蓝 / 白', img:'images/image38.jpeg', keywords:'放射纹、圆点纹、渐变纹、中心对称、软边晕染、放射扩展、扎染、青蓝/白' },
+  { name:'云纹·雨点纹', craft:'扎染', region:'云贵', desc:'扎染 · 群青 / 蓝白 · 云纹', color:'群青 / 蓝白', img:'images/image39.jpeg', keywords:'云纹、雨点纹、晕染纹、非对称、渗化边缘、自由重复、扎染、群青/蓝白' },
+  { name:'山形纹·折线纹', craft:'扎染', region:'云贵', desc:'扎染 · 藏蓝 / 浅蓝 · 山形纹', color:'藏蓝 / 浅蓝', img:'images/image40.jpeg', keywords:'山形纹、折线纹、抽象纹、轴对称、圆点重复、软边晕染、扎染、藏蓝/浅蓝' },
+  { name:'晕染纹·圆点纹', craft:'扎染', region:'云贵', desc:'扎染 · 靛蓝 / 蓝白 · 晕染纹', color:'靛蓝 / 蓝白', img:'images/image41.jpeg', keywords:'晕染纹、圆点纹、随机结染纹、满地式、随机分布、高曲率、扎染、靛蓝/蓝白' },
+  { name:'水波纹·涡旋纹', craft:'扎染', region:'云贵', desc:'扎染 · 深蓝 / 白 · 水波纹', color:'深蓝 / 白', img:'images/image42.jpeg', keywords:'水波纹、涡旋纹、肌理纹、中心对称、软边晕染、放射扩展、扎染、深蓝/白' },
+  { name:'放射纹·圆点纹', craft:'扎染', region:'云贵', desc:'扎染 · 青蓝 / 白 · 放射纹', color:'青蓝 / 白', img:'images/image43.jpeg', keywords:'放射纹、圆点纹、渐变纹、非对称、渗化边缘、自由重复、扎染、青蓝/白' },
+  { name:'云纹·雨点纹', craft:'扎染', region:'云贵', desc:'扎染 · 群青 / 蓝白 · 云纹', color:'群青 / 蓝白', img:'images/image44.jpeg', keywords:'云纹、雨点纹、晕染纹、轴对称、圆点重复、软边晕染、扎染、群青/蓝白' },
+  { name:'山形纹·折线纹', craft:'扎染', region:'云贵', desc:'扎染 · 藏蓝 / 浅蓝 · 山形纹', color:'藏蓝 / 浅蓝', img:'images/image45.jpeg', keywords:'山形纹、折线纹、抽象纹、满地式、随机分布、高曲率、扎染、藏蓝/浅蓝' },
+  { name:'晕染纹·圆点纹', craft:'扎染', region:'云贵', desc:'扎染 · 靛蓝 / 蓝白 · 晕染纹', color:'靛蓝 / 蓝白', img:'images/image46.jpeg', keywords:'晕染纹、圆点纹、随机结染纹、中心对称、软边晕染、放射扩展、扎染、靛蓝/蓝白' },
+  { name:'水波纹·涡旋纹', craft:'扎染', region:'云贵', desc:'扎染 · 深蓝 / 白 · 水波纹', color:'深蓝 / 白', img:'images/image47.jpeg', keywords:'水波纹、涡旋纹、肌理纹、非对称、渗化边缘、自由重复、扎染、深蓝/白' },
+  { name:'放射纹·圆点纹', craft:'扎染', region:'云贵', desc:'扎染 · 青蓝 / 白 · 放射纹', color:'青蓝 / 白', img:'images/image48.jpeg', keywords:'放射纹、圆点纹、渐变纹、轴对称、圆点重复、软边晕染、扎染、青蓝/白' },
+  { name:'云纹·雨点纹', craft:'扎染', region:'云贵', desc:'扎染 · 群青 / 蓝白 · 云纹', color:'群青 / 蓝白', img:'images/image49.jpeg', keywords:'云纹、雨点纹、晕染纹、满地式、随机分布、高曲率、扎染、群青/蓝白' },
+  { name:'山形纹·折线纹', craft:'扎染', region:'云贵', desc:'扎染 · 藏蓝 / 浅蓝 · 山形纹', color:'藏蓝 / 浅蓝', img:'images/image50.jpeg', keywords:'山形纹、折线纹、抽象纹、中心对称、软边晕染、放射扩展、扎染、藏蓝/浅蓝' },
+  { name:'晕染纹·圆点纹', craft:'扎染', region:'云贵', desc:'扎染 · 靛蓝 / 蓝白 · 晕染纹', color:'靛蓝 / 蓝白', img:'images/image51.jpeg', keywords:'晕染纹、圆点纹、随机结染纹、非对称、渗化边缘、自由重复、扎染、靛蓝/蓝白' },
+  { name:'水波纹·涡旋纹', craft:'扎染', region:'云贵', desc:'扎染 · 深蓝 / 白 · 水波纹', color:'深蓝 / 白', img:'images/image52.jpeg', keywords:'水波纹、涡旋纹、肌理纹、轴对称、圆点重复、软边晕染、扎染、深蓝/白' },
+  { name:'放射纹·圆点纹', craft:'扎染', region:'云贵', desc:'扎染 · 青蓝 / 白 · 放射纹', color:'青蓝 / 白', img:'images/image53.jpeg', keywords:'放射纹、圆点纹、渐变纹、满地式、随机分布、高曲率、扎染、青蓝/白' },
+  { name:'云纹·雨点纹', craft:'扎染', region:'云贵', desc:'扎染 · 群青 / 蓝白 · 云纹', color:'群青 / 蓝白', img:'images/image54.jpeg', keywords:'云纹、雨点纹、晕染纹、中心对称、软边晕染、放射扩展、扎染、群青/蓝白' },
+  { name:'山形纹·折线纹', craft:'扎染', region:'云贵', desc:'扎染 · 藏蓝 / 浅蓝 · 山形纹', color:'藏蓝 / 浅蓝', img:'images/image55.jpeg', keywords:'山形纹、折线纹、抽象纹、非对称、渗化边缘、自由重复、扎染、藏蓝/浅蓝' },
+  { name:'冰裂纹·藤蔓纹', craft:'蜡染', region:'湘西', desc:'蜡染 · 靛蓝 / 蓝白 · 冰裂纹', color:'靛蓝 / 蓝白', img:'images/image56.jpeg', keywords:'冰裂纹、藤蔓纹、花卉纹、散点式、软硬边结合、中密度、蜡染、靛蓝/蓝白' },
+  { name:'云纹·涡旋纹', craft:'蜡染', region:'湘西', desc:'蜡染 · 青蓝 / 白 · 云纹', color:'青蓝 / 白', img:'images/image57.jpeg', keywords:'云纹、涡旋纹、裂变纹、满地式、曲线型、裂纹边缘、蜡染、青蓝/白' },
+  { name:'鸟纹·叶纹', craft:'蜡染', region:'湘西', desc:'蜡染 · 群青 / 蓝白 · 鸟纹', color:'群青 / 蓝白', img:'images/image58.jpeg', keywords:'鸟纹、叶纹、折枝花、四方连续、高曲率、硬边防染、蜡染、群青/蓝白' },
+  { name:'几何纹·八角纹', craft:'蜡染', region:'湘西', desc:'蜡染 · 藏蓝 / 浅蓝 · 几何纹', color:'藏蓝 / 浅蓝', img:'images/image59.webp', keywords:'几何纹、八角纹、冰裂纹、散点式、软硬边结合、中密度、蜡染、藏蓝/浅蓝' },
+  { name:'冰裂纹·藤蔓纹', craft:'蜡染', region:'湘西', desc:'蜡染 · 靛蓝 / 蓝白 · 冰裂纹', color:'靛蓝 / 蓝白', img:'images/image60.jpeg', keywords:'冰裂纹、藤蔓纹、花卉纹、中心对称、适合纹样、裂纹边缘、蜡染、靛蓝/蓝白' },
+  { name:'蝴蝶纹·卷草纹', craft:'蜡染', region:'湘西', desc:'蜡染 · 深蓝 / 白 · 蝴蝶纹', color:'深蓝 / 白', img:'images/image61.jpeg', keywords:'蝴蝶纹、卷草纹、水波纹、满地式、曲线型、裂纹边缘、蜡染、深蓝/白' },
+  { name:'云纹·涡旋纹', craft:'蜡染', region:'湘西', desc:'蜡染 · 青蓝 / 白 · 云纹', color:'青蓝 / 白', img:'images/image62.jpeg', keywords:'云纹、涡旋纹、裂变纹、四方连续、高曲率、硬边防染、蜡染、青蓝/白' },
+  { name:'鸟纹·叶纹', craft:'蜡染', region:'湘西', desc:'蜡染 · 群青 / 蓝白 · 鸟纹', color:'群青 / 蓝白', img:'images/image63.jpeg', keywords:'鸟纹、叶纹、折枝花、散点式、软硬边结合、中密度、蜡染、群青/蓝白' },
+  { name:'几何纹·八角纹', craft:'蜡染', region:'湘西', desc:'蜡染 · 藏蓝 / 浅蓝 · 几何纹', color:'藏蓝 / 浅蓝', img:'images/image64.jpeg', keywords:'几何纹、八角纹、冰裂纹、中心对称、适合纹样、裂纹边缘、蜡染、藏蓝/浅蓝' },
+  { name:'冰裂纹·藤蔓纹', craft:'蜡染', region:'湘西', desc:'蜡染 · 靛蓝 / 蓝白 · 冰裂纹', color:'靛蓝 / 蓝白', img:'images/image65.webp', keywords:'冰裂纹、藤蔓纹、花卉纹、满地式、曲线型、裂纹边缘、蜡染、靛蓝/蓝白' },
+  { name:'蝴蝶纹·卷草纹', craft:'蜡染', region:'湘西', desc:'蜡染 · 深蓝 / 白 · 蝴蝶纹', color:'深蓝 / 白', img:'images/image66.jpeg', keywords:'蝴蝶纹、卷草纹、水波纹、四方连续、高曲率、硬边防染、蜡染、深蓝/白' },
+  { name:'云纹·涡旋纹', craft:'蜡染', region:'湘西', desc:'蜡染 · 青蓝 / 白 · 云纹', color:'青蓝 / 白', img:'images/image67.jpeg', keywords:'云纹、涡旋纹、裂变纹、散点式、软硬边结合、中密度、蜡染、青蓝/白' },
+  { name:'鸟纹·叶纹', craft:'蜡染', region:'湘西', desc:'蜡染 · 群青 / 蓝白 · 鸟纹', color:'群青 / 蓝白', img:'images/image69.jpeg', keywords:'鸟纹、叶纹、折枝花、中心对称、适合纹样、裂纹边缘、蜡染、群青/蓝白' },
+  { name:'几何纹·八角纹', craft:'蜡染', region:'湘西', desc:'蜡染 · 藏蓝 / 浅蓝 · 几何纹', color:'藏蓝 / 浅蓝', img:'images/image70.jpeg', keywords:'几何纹、八角纹、冰裂纹、满地式、曲线型、裂纹边缘、蜡染、藏蓝/浅蓝' },
+  { name:'冰裂纹·藤蔓纹', craft:'蜡染', region:'湘西', desc:'蜡染 · 靛蓝 / 蓝白 · 冰裂纹', color:'靛蓝 / 蓝白', img:'images/image71.jpeg', keywords:'冰裂纹、藤蔓纹、花卉纹、四方连续、高曲率、硬边防染、蜡染、靛蓝/蓝白' },
+  { name:'蝴蝶纹·卷草纹', craft:'蜡染', region:'湘西', desc:'蜡染 · 深蓝 / 白 · 蝴蝶纹', color:'深蓝 / 白', img:'images/image68.jpeg', keywords:'蝴蝶纹、卷草纹、水波纹、散点式、软硬边结合、中密度、蜡染、深蓝/白' },
+  { name:'云纹·涡旋纹', craft:'蜡染', region:'湘西', desc:'蜡染 · 青蓝 / 白 · 云纹', color:'青蓝 / 白', img:'images/image72.jpeg', keywords:'云纹、涡旋纹、裂变纹、中心对称、适合纹样、裂纹边缘、蜡染、青蓝/白' },
+  { name:'鸟纹·叶纹', craft:'蜡染', region:'湘西', desc:'蜡染 · 群青 / 蓝白 · 鸟纹', color:'群青 / 蓝白', img:'images/image73.webp', keywords:'鸟纹、叶纹、折枝花、满地式、曲线型、裂纹边缘、蜡染、群青/蓝白' },
+  { name:'几何纹·八角纹', craft:'蜡染', region:'湘西', desc:'蜡染 · 藏蓝 / 浅蓝 · 几何纹', color:'藏蓝 / 浅蓝', img:'images/image74.jpeg', keywords:'几何纹、八角纹、冰裂纹、四方连续、高曲率、硬边防染、蜡染、藏蓝/浅蓝' },
+  { name:'水波纹·叶纹', craft:'蓝染', region:'云贵', desc:'蓝染 · 靛蓝 / 蓝白 · 水波纹', color:'靛蓝 / 蓝白', img:'images/image75.jpeg', keywords:'水波纹、叶纹、肌理纹、非对称、渗化边缘、低密度、蓝染、靛蓝/蓝白' },
+  { name:'缠枝花·花卉纹', craft:'蓝染', region:'云贵', desc:'蓝染 · 深蓝 / 白 · 缠枝花', color:'深蓝 / 白', img:'images/image76.jpeg', keywords:'缠枝花、花卉纹、蓝白纹、轴对称、几何重复、中密度、蓝染、深蓝/白' },
+  { name:'菱形纹·圆点纹', craft:'蓝染', region:'云贵', desc:'蓝染 · 青蓝 / 白 · 菱形纹', color:'青蓝 / 白', img:'images/image77.jpeg', keywords:'菱形纹、圆点纹、几何纹、满地式、软边晕染、自由重复、蓝染、青蓝/白' },
+  { name:'云纹·渐变纹', craft:'蓝染', region:'云贵', desc:'蓝染 · 群青 / 蓝白 · 云纹', color:'群青 / 蓝白', img:'images/image78.jpeg', keywords:'云纹、渐变纹、抽象纹、四方连续、曲线型、规则重复、蓝染、群青/蓝白' },
+  { name:'山形纹·雨点纹', craft:'蓝染', region:'云贵', desc:'蓝染 · 藏蓝 / 浅蓝 · 山形纹', color:'藏蓝 / 浅蓝', img:'images/image79.jpeg', keywords:'山形纹、雨点纹、自然纹、非对称、渗化边缘、低密度、蓝染、藏蓝/浅蓝' },
+  { name:'水波纹·叶纹', craft:'蓝染', region:'云贵', desc:'蓝染 · 靛蓝 / 蓝白 · 水波纹', color:'靛蓝 / 蓝白', img:'images/image80.jpeg', keywords:'水波纹、叶纹、肌理纹、轴对称、几何重复、中密度、蓝染、靛蓝/蓝白' },
+  { name:'缠枝花·花卉纹', craft:'蓝染', region:'云贵', desc:'蓝染 · 深蓝 / 白 · 缠枝花', color:'深蓝 / 白', img:'images/image81.jpeg', keywords:'缠枝花、花卉纹、蓝白纹、满地式、软边晕染、自由重复、蓝染、深蓝/白' },
+  { name:'菱形纹·圆点纹', craft:'蓝染', region:'云贵', desc:'蓝染 · 青蓝 / 白 · 菱形纹', color:'青蓝 / 白', img:'images/image82.jpeg', keywords:'菱形纹、圆点纹、几何纹、四方连续、曲线型、规则重复、蓝染、青蓝/白' },
+  { name:'云纹·渐变纹', craft:'蓝染', region:'云贵', desc:'蓝染 · 群青 / 蓝白 · 云纹', color:'群青 / 蓝白', img:'images/image83.jpeg', keywords:'云纹、渐变纹、抽象纹、非对称、渗化边缘、低密度、蓝染、群青/蓝白' },
+  { name:'山形纹·雨点纹', craft:'蓝染', region:'云贵', desc:'蓝染 · 藏蓝 / 浅蓝 · 山形纹', color:'藏蓝 / 浅蓝', img:'images/image84.jpeg', keywords:'山形纹、雨点纹、自然纹、轴对称、几何重复、中密度、蓝染、藏蓝/浅蓝' },
+  { name:'水波纹·叶纹', craft:'蓝染', region:'云贵', desc:'蓝染 · 靛蓝 / 蓝白 · 水波纹', color:'靛蓝 / 蓝白', img:'images/image85.jpeg', keywords:'水波纹、叶纹、肌理纹、满地式、软边晕染、自由重复、蓝染、靛蓝/蓝白' },
+  { name:'缠枝花·花卉纹', craft:'蓝染', region:'云贵', desc:'蓝染 · 深蓝 / 白 · 缠枝花', color:'深蓝 / 白', img:'images/image86.jpeg', keywords:'缠枝花、花卉纹、蓝白纹、四方连续、曲线型、规则重复、蓝染、深蓝/白' },
+  { name:'菱形纹·圆点纹', craft:'蓝染', region:'云贵', desc:'蓝染 · 青蓝 / 白 · 菱形纹', color:'青蓝 / 白', img:'images/image87.jpeg', keywords:'菱形纹、圆点纹、几何纹、非对称、渗化边缘、低密度、蓝染、青蓝/白' },
+  { name:'云纹·渐变纹', craft:'蓝染', region:'云贵', desc:'蓝染 · 群青 / 蓝白 · 云纹', color:'群青 / 蓝白', img:'images/image88.jpeg', keywords:'云纹、渐变纹、抽象纹、轴对称、几何重复、中密度、蓝染、群青/蓝白' },
+  { name:'圆点纹·方形纹', craft:'夹缬', region:'江苏', desc:'夹缬 · 藏蓝 / 浅蓝 · 圆点纹', color:'藏蓝 / 浅蓝', img:'images/image89.jpeg', keywords:'圆点纹、方形纹、规则纹、旋转对称、几何重复、硬边防染、夹缬、藏蓝/浅蓝' },
+  { name:'菱形纹·八角纹', craft:'夹缬', region:'江苏', desc:'夹缬 · 靛蓝 / 蓝白 · 菱形纹', color:'靛蓝 / 蓝白', img:'images/image90.jpeg', keywords:'菱形纹、八角纹、方格纹、轴对称、四方连续、直线型、夹缬、靛蓝/蓝白' },
+  { name:'十字纹·回纹', craft:'夹缬', region:'江苏', desc:'夹缬 · 深蓝 / 白 · 十字纹', color:'深蓝 / 白', img:'images/image91.jpeg', keywords:'十字纹、回纹、几何纹、中心对称、适合纹样、硬边防染、夹缬、深蓝/白' },
+  { name:'团花纹·放射纹', craft:'夹缬', region:'江苏', desc:'夹缬 · 青蓝 / 白 · 团花纹', color:'青蓝 / 白', img:'images/image92.jpeg', keywords:'团花纹、放射纹、适合纹样、二方连续、边饰纹样、低曲率、夹缬、青蓝/白' },
+  { name:'折线纹·山形纹', craft:'夹缬', region:'江苏', desc:'夹缬 · 群青 / 蓝白 · 折线纹', color:'群青 / 蓝白', img:'images/image93.jpeg', keywords:'折线纹、山形纹、连续纹、旋转对称、几何重复、硬边防染、夹缬、群青/蓝白' },
+  { name:'圆点纹·方形纹', craft:'夹缬', region:'江苏', desc:'夹缬 · 藏蓝 / 浅蓝 · 圆点纹', color:'藏蓝 / 浅蓝', img:'images/image94.jpeg', keywords:'圆点纹、方形纹、规则纹、轴对称、四方连续、直线型、夹缬、藏蓝/浅蓝' },
+  { name:'菱形纹·八角纹', craft:'夹缬', region:'江苏', desc:'夹缬 · 靛蓝 / 蓝白 · 菱形纹', color:'靛蓝 / 蓝白', img:'images/image95.jpeg', keywords:'菱形纹、八角纹、方格纹、中心对称、适合纹样、硬边防染、夹缬、靛蓝/蓝白' },
+  { name:'十字纹·回纹', craft:'夹缬', region:'江苏', desc:'夹缬 · 深蓝 / 白 · 十字纹', color:'深蓝 / 白', img:'images/image96.webp', keywords:'十字纹、回纹、几何纹、二方连续、边饰纹样、低曲率、夹缬、深蓝/白' },
+  { name:'涡旋纹·裂变纹', craft:'现代蓝染', region:'浙江', desc:'现代蓝染 · 青蓝 / 白 · 涡旋纹', color:'青蓝 / 白', img:'images/image97.webp', keywords:'涡旋纹、裂变纹、自由纹、非对称、断裂线、裂纹边缘、现代蓝染、青蓝/白' },
+  { name:'圆点纹·几何纹', craft:'现代蓝染', region:'浙江', desc:'现代蓝染 · 群青 / 蓝白 · 圆点纹', color:'群青 / 蓝白', img:'images/image98.webp', keywords:'圆点纹、几何纹、现代纹样、满地式、软边晕染、渐变层次、现代蓝染、群青/蓝白' },
+  { name:'云纹·雨点纹', craft:'现代蓝染', region:'浙江', desc:'现代蓝染 · 藏蓝 / 浅蓝 · 云纹', color:'藏蓝 / 浅蓝', img:'images/image99.webp', keywords:'云纹、雨点纹、自然肌理、散点式、高曲率、自由重复、现代蓝染、藏蓝/浅蓝' },
+  { name:'冰裂纹·肌理纹', craft:'现代蓝染', region:'浙江', desc:'现代蓝染 · 靛蓝 / 蓝白 · 冰裂纹', color:'靛蓝 / 蓝白', img:'images/image100.webp', keywords:'冰裂纹、肌理纹、抽象纹、四方连续、几何重复、现代构成、现代蓝染、靛蓝/蓝白' },
+  { name:'渐变纹·水波纹', craft:'现代蓝染', region:'浙江', desc:'现代蓝染 · 深蓝 / 白 · 渐变纹', color:'深蓝 / 白', img:'images/image101.jpeg', keywords:'渐变纹、水波纹、晕染纹、非对称、断裂线、裂纹边缘、现代蓝染、深蓝/白' },
+  { name:'涡旋纹·裂变纹', craft:'现代蓝染', region:'浙江', desc:'现代蓝染 · 青蓝 / 白 · 涡旋纹', color:'青蓝 / 白', img:'images/image102.jpeg', keywords:'涡旋纹、裂变纹、自由纹、满地式、软边晕染、渐变层次、现代蓝染、青蓝/白' },
+  { name:'圆点纹·几何纹', craft:'现代蓝染', region:'浙江', desc:'现代蓝染 · 群青 / 蓝白 · 圆点纹', color:'群青 / 蓝白', img:'images/image103.jpeg', keywords:'圆点纹、几何纹、现代纹样、散点式、高曲率、自由重复、现代蓝染、群青/蓝白' },
+  { name:'云纹·雨点纹', craft:'现代蓝染', region:'浙江', desc:'现代蓝染 · 藏蓝 / 浅蓝 · 云纹', color:'藏蓝 / 浅蓝', img:'images/image69.jpeg', keywords:'云纹、雨点纹、自然肌理、四方连续、几何重复、现代构成、现代蓝染、藏蓝/浅蓝' }
+];
+
+const validPatterns = DB_PATTERNS.filter(p => p.img);
+
+// ===== AI生成预设图片组 =====
+// 根据工艺风格 × 复杂度等级预设不同图片组合
+const PRESET_GEN_GROUPS = {
+  '扎染': {
+    low:  ['images/image34.jpeg','images/image35.jpeg','images/image36.jpeg','images/image37.jpeg'],
+    mid:  ['images/image38.jpeg','images/image39.jpeg','images/image40.jpeg','images/image41.jpeg'],
+    high: ['images/image42.jpeg','images/image43.jpeg','images/image44.jpeg','images/image55.jpeg']
+  },
+  '蜡染': {
+    low:  ['images/image56.jpeg','images/image57.jpeg','images/image58.jpeg','images/image59.webp'],
+    mid:  ['images/image60.jpeg','images/image61.jpeg','images/image62.jpeg','images/image63.jpeg'],
+    high: ['images/image64.jpeg','images/image65.webp','images/image66.jpeg','images/image67.jpeg']
+  },
+  '夹染': {
+    low:  ['images/image6.jpeg','images/image7.jpeg','images/image8.jpeg','images/image9.jpeg'],
+    mid:  ['images/image10.jpeg','images/image11.jpeg','images/image12.jpeg','images/image13.jpeg'],
+    high: ['images/image14.jpeg','images/image15.jpeg','images/image16.jpeg','images/image17.jpeg']
+  }
+};
+// 根据对称性等级微调变体标签
+const SYMMETRY_LABELS = {
+  low:  ['自由纹样','随机分布','非对称变体','抽象变体'],
+  mid:  ['半对称纹样','平衡变体','近似对称','规则变体'],
+  high: ['轴对称纹样','中心对称','四方连续','完美对称']
+};
+// 根据密度等级显示描述
+const DENSITY_DESC = {
+  low:  '低密度 · 留白意境',
+  mid:  '中密度 · 均衡布局',
+  high: '高密度 · 满地图案'
+};
+
+function getSliderLevel(id) {
+  const fill = document.getElementById(id + '-fill');
+  if (!fill) return 'mid';
+  const pct = parseFloat(fill.style.width) || 50;
+  if (pct < 34) return 'low';
+  if (pct > 66) return 'high';
+  return 'mid';
+}
+
+function getSelectedStyle() {
+  const active = document.querySelector('.style-btn.text-white');
+  return active ? active.dataset.style : '扎染';
+}
+
+const DB_GRADIENTS = [
+  'from-[#1e2143] via-[#3a3e6b] to-[#6366F1]',
+  'from-[#1a2e4d] via-[#344a73] to-[#5a6fb5]',
+  'from-[#152347] via-[#2a3657] to-[#4a5694]',
+  'from-[#242b52] via-[#3d4880] to-[#6b72b8]',
+  'from-[#0f1a3c] via-[#26325c] to-[#4d5788]',
+  'from-[#181f45] via-[#2d3a6e] to-[#545b8a]',
+  'from-[#1d2650] via-[#34406e] to-[#5b64a0]',
+  'from-[#202855] via-[#373f72] to-[#5962a5]',
+];
+const DB_PATTERNS_CSS = ['pattern-crackle','pattern-spiral','pattern-wave','pattern-tie','pattern-batik','pattern-border','pattern-crackle','pattern-spiral'];
+
+let dbOffset = 0;
+const DB_PER_PAGE = 12;
+let dbCurrentData = DB_PATTERNS;
+
+function renderDatabase(filtered) {
+  const grid = document.getElementById('database-grid');
+  const data = filtered || DB_PATTERNS;
+  dbCurrentData = data;
+  const page = data.slice(0, dbOffset + DB_PER_PAGE);
+  grid.innerHTML = page.map((p, i) => {
+    const imgSrc = p.img || '';
+    const hasImg = imgSrc && imgSrc !== 'undefined';
+    const idx = DB_PATTERNS.indexOf(p);
+    return `
+    <div class="bg-white card-shadow overflow-hidden group cursor-pointer hover:-translate-y-1 transition fade-up" style="animation-delay:${i*0.04}s" onclick="showPatternDetail(${idx})">
+      <div class="h-52 relative flex items-center justify-center overflow-hidden">
+        ${hasImg ? `<img src="${imgSrc}" alt="${p.name}" class="w-full h-full object-cover img-zoom" loading="lazy" />` : `<div class="w-full h-full bg-gradient-to-br ${DB_GRADIENTS[i%DB_GRADIENTS.length]} ${DB_PATTERNS_CSS[i%DB_PATTERNS_CSS.length]}"></div>`}
+        <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition bg-black/30 flex items-center justify-center">
+          <span class="text-white text-sm font-medium bg-white/20 px-4 py-2 backdrop-blur-sm">查看详情</span>
+        </div>
+        <div class="absolute top-2 left-2">
+          <span class="px-2 py-1 bg-white/90 text-[11px] text-[#6366F1] font-medium">${p.craft}</span>
+        </div>
+      </div>
+      <div class="p-4">
+        <h3 class="font-serif text-[16px] font-medium text-[#312E81] mb-1">${p.name}</h3>
+        <p class="text-[12px] text-[#64748B] mb-2">${p.desc}</p>
+        <div class="flex gap-2 flex-wrap">
+          <span class="px-2 py-0.5 bg-[#EEF2FF] text-[11px] text-[#64748B]">${p.region}</span>
+          <span class="px-2 py-0.5 bg-[#EEF2FF] text-[11px] text-[#64748B]">${p.color}</span>
+        </div>
+      </div>
+    </div>
+  `}).join('');
+  // 更新结果计数
+  const countEl = document.getElementById('db-result-count');
+  if (countEl) countEl.textContent = `共 ${data.length} 件纹样 · 当前显示 ${page.length} 件`;
+  document.getElementById('db-load-more').style.display = (dbOffset + DB_PER_PAGE < data.length) ? 'inline-block' : 'none';
+}
+
+// 纹样详情弹窗
+function showPatternDetail(idx) {
+  const p = DB_PATTERNS[idx];
+  if (!p) return;
+  const modal = document.createElement('div');
+  modal.className = 'fixed inset-0 z-[100] bg-black/70 flex items-center justify-center p-6';
+  modal.onclick = () => modal.remove();
+  const kwList = p.keywords ? p.keywords.split('、') : [];
+  modal.innerHTML = `
+    <div class="bg-white max-w-[800px] w-full max-h-[85vh] overflow-y-auto" onclick="event.stopPropagation()">
+      <div class="relative">
+        <img src="${p.img}" alt="${p.name}" class="w-full h-[400px] object-cover" />
+        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+        <button class="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/90 text-[#312E81] flex items-center justify-center text-xl font-bold z-10" onclick="this.closest('.fixed').remove()">×</button>
+        <div class="absolute bottom-6 left-6 right-6">
+          <h2 class="font-serif text-[28px] font-bold text-white mb-2">${p.name}</h2>
+          <div class="flex gap-2">
+            <span class="px-3 py-1 bg-white/20 backdrop-blur-sm text-white text-[13px] font-medium">${p.craft}</span>
+            <span class="px-3 py-1 bg-white/20 backdrop-blur-sm text-white text-[13px]">${p.region}</span>
+            <span class="px-3 py-1 bg-white/20 backdrop-blur-sm text-white text-[13px]">${p.color}</span>
+          </div>
+        </div>
+      </div>
+      <div class="p-8">
+        <div class="mb-6">
+          <h3 class="font-serif text-[18px] font-semibold text-[#312E81] mb-3">纹样描述</h3>
+          <p class="text-[#64748B] text-[15px] leading-7">${p.desc}</p>
+        </div>
+        <div class="mb-6">
+          <h3 class="font-serif text-[18px] font-semibold text-[#312E81] mb-3">纹样关键词</h3>
+          <div class="flex gap-2 flex-wrap">
+            ${kwList.map(k => `<span class="px-3 py-1.5 bg-[#EEF2FF] text-[13px] text-[#6366F1] font-medium">${k}</span>`).join('')}
+          </div>
+        </div>
+        <div class="flex gap-3 pt-4 border-t border-[#E0E7FF]">
+          <button class="px-6 py-2.5 bg-[#6366F1] text-white text-[14px] font-medium hover:opacity-90 transition" onclick="showPage('generate');document.getElementById('keywords').value='${p.name.split('·')[0]}+${p.name.split('·')[1]||''}';setTimeout(()=>generatePatterns(),300);this.closest('.fixed').remove()">🎨 用此纹样生成</button>
+          <button class="px-6 py-2.5 bg-[#EEF2FF] text-[#312E81] text-[14px] font-medium hover:bg-[#E0E7FF] transition" onclick="this.textContent='♥ 已收藏'; this.classList.add('text-[#6366F1]')">收藏</button>
+        </div>
+      </div>
+    </div>`;
+  document.body.appendChild(modal);
+}
+
+function filterDatabase() {
+  const kw = (document.getElementById('db-search')?.value || '').toLowerCase();
+  const craft = document.getElementById('db-filter-craft')?.value || 'all';
+  const region = document.getElementById('db-filter-region')?.value || 'all';
+  const filtered = DB_PATTERNS.filter(p =>
+    (craft === 'all' || p.craft === craft) &&
+    (region === 'all' || p.region === region) &&
+    (kw === '' || p.name.toLowerCase().includes(kw) || p.desc.toLowerCase().includes(kw) || p.craft.includes(kw) || (p.keywords||'').toLowerCase().includes(kw))
+  );
+  dbOffset = 0;
+  renderDatabase(filtered);
+}
+
+function loadMoreDatabase() { dbOffset += DB_PER_PAGE; filterDatabase(); }
+
+// ===== 知识百科 tab 切换 =====
+function switchKnowTab(tab) {
+  document.querySelectorAll('.know-content').forEach(el => el.classList.add('hidden'));
+  document.querySelectorAll('.know-tab').forEach(b => { b.classList.remove('bg-[#6366F1]','text-white'); b.classList.add('bg-[#EEF2FF]','text-[#64748B]'); });
+  document.getElementById('know-' + tab).classList.remove('hidden');
+  event.target.classList.remove('bg-[#EEF2FF]','text-[#64748B]');
+  event.target.classList.add('bg-[#6366F1]','text-white');
+}
+
+// ===== 展览 tab 切换 =====
+function switchExhibit(tab) {
+  document.querySelectorAll('.exhibit-content').forEach(el => el.classList.add('hidden'));
+  document.querySelectorAll('.exhibit-tab').forEach(b => { b.classList.remove('bg-white/20','text-white'); b.classList.add('bg-white/10','text-white/80'); });
+  document.getElementById('exhibit-' + tab).classList.remove('hidden');
+  event.target.classList.remove('bg-white/10','text-white/80');
+  event.target.classList.add('bg-white/20','text-white');
+}
+
+// ===== 纹样故事全文 =====
+const STORY_DATA = [
+  {
+    title: '冰裂纹的千年密码',
+    img: 'images/image22.jpeg',
+    tag: '纹样故事 #1',
+    badge: '扎染 · 云南大理',
+    full: `冰裂纹是扎染最具代表性的纹样之一。当线绳紧紧扎住布料放入染缸时，靛蓝染液沿着布的褶皱渗入，在拆线后形成如冰裂般的自然纹理。每一道裂纹都是独一无二的，象征着大自然的鬼斧神工和工匠精神的完美融合。\n\n冰裂纹的形成有着深厚的物理原理。当布料被扎结后，染液只能通过毛细作用沿着纤维缝隙缓慢渗透。由于扎结力度、布料厚度、染液浓度等因素的微妙差异，每一次染色都会产生完全不同的裂纹走向。这种"不可控之美"正是扎染工艺的灵魂所在。\n\n在云南大理白族扎染中，冰裂纹被称为"绞缬纹"，已有千年传承历史。白族妇女们通过代代相传的经验积累，掌握了不同扎结方式与裂纹走向之间的规律。她们用针线在布上"画"出心中的图案，再交给染缸来完成最终的"上色"——这是人与自然合作的艺术。\n\n冰裂纹的美学价值在当代设计中得到重新发现。许多现代时装设计师将冰裂纹元素融入服装设计，赋予传统纹样以现代生命力。这种古老而永恒的纹样，正在以全新的面貌走向世界舞台。`
+  },
+  {
+    title: '苗族蝴蝶妈妈的传说',
+    img: 'images/image23.jpeg',
+    tag: '纹样故事 #2',
+    badge: '蜡染 · 贵州丹寨',
+    full: `在苗族蜡染中，蝴蝶纹样有着特殊地位。苗族古歌传颂"蝴蝶妈妈"是人类的始祖，蜡染中的蝴蝶纹样世代相传，承载着苗族人民对祖先的崇敬和对自然万物的敬畏，成为苗族蜡染中最具代表性的图腾符号之一。\n\n苗族古歌《苗族史诗》中记载，蝴蝶妈妈生于枫木之中，她与水泡恋爱后生下十二个蛋，孵化出人类始祖姜央以及龙、虎、蛇等万物。因此，蝴蝶在苗族文化中不仅仅是美丽的昆虫，更是万物之母、生命之源的象征。苗族妇女在蜡染布上绘制蝴蝶，既是对祖先的纪念，也是对生命力量的礼赞。\n\n苗族蜡染中的蝴蝶纹样造型丰富多变。有的蝴蝶展翅飞翔，有的与花卉缠绕共生，有的则与鱼、鸟组合成复合纹样。这些纹样并非随意创作，而是严格遵循苗族传统的图案谱系，每一种变体都有其特定的文化含义和使用场合。\n\n在贵州丹寨、榕江等苗族聚居区，蜡染蝴蝶纹样至今仍是女性服饰、背扇、被面等重要物品上的主要装饰。年轻苗族姑娘从小学习蜡染技艺，通过绘制蝴蝶纹样来传承民族文化记忆。这种以蜡为笔、以布为纸的传承方式，让千年传说在指尖延续。`
+  },
+  {
+    title: '水波纹与农耕文明',
+    img: 'images/image24.jpeg',
+    tag: '纹样故事 #3',
+    badge: '蓝印花布 · 江苏南通',
+    full: `水波纹样是蓝印花布中最古老的纹饰之一，源于农耕社会对水的依赖和崇拜。连续的波浪线条象征着生生不息的生命力，也寓意着丰收与吉祥。在江苏南通蓝印花布中，水波纹常与鱼纹、莲花组合，构成丰富的文化意象。\n\n水波纹的历史可以追溯到新石器时代的彩陶装饰。在马家窑文化的陶器上，我们就已经能看到流畅的水波线条。这种纹样经过数千年的演变，从陶器到青铜器，从丝绸到棉布，始终保持着旺盛的生命力。在蓝印花布中，水波纹以其简洁有力的线条和富有韵律感的排列，成为最受百姓喜爱的纹饰之一。\n\n在南通蓝印花布的传统图案中，水波纹有着多种表现形式。最常见的是"连续波浪纹"，以规则的S形曲线反复排列，形成如水面涟漪般的视觉效果。另一种是"鱼戏水波纹"，将鱼的造型与水波线条巧妙结合，寓意"年年有余"。"莲池水波纹"则将莲花、荷叶与水波组合，象征"连年如意"。\n\n水波纹的制作工艺体现了蓝印花布的技术精髓。工匠需要在涂满防染浆的布面上，用刮刀精确地刮出水波线条。线条的粗细、间距、弧度都需要严格把控，稍有偏差就会破坏整体效果。这种对精确度的追求，使得每一件水波纹蓝印花布都成为匠心独运的艺术品。`
+  }
+];
+
+function showStoryDetail(idx) {
+  const s = STORY_DATA[idx];
+  if (!s) return;
+  const modal = document.createElement('div');
+  modal.className = 'fixed inset-0 z-[100] bg-black/70 flex items-center justify-center p-6';
+  modal.onclick = () => modal.remove();
+  const paragraphs = s.full.split('\n\n');
+  modal.innerHTML = `
+    <div class="bg-white max-w-[700px] w-full max-h-[85vh] overflow-y-auto rounded-lg" onclick="event.stopPropagation()">
+      <div class="relative">
+        <img src="${s.img}" alt="${s.title}" class="w-full h-[280px] object-cover rounded-t-lg" />
+        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent rounded-t-lg"></div>
+        <button class="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/90 text-[#312E81] flex items-center justify-center text-xl font-bold z-10" onclick="this.closest('.fixed').remove()">×</button>
+        <div class="absolute bottom-5 left-6 right-6">
+          <span class="text-[12px] text-[#C9A96E] font-medium">${s.tag}</span>
+          <h2 class="font-serif text-[26px] font-bold text-white mt-1 mb-2">${s.title}</h2>
+          <span class="px-3 py-1 bg-white/20 backdrop-blur-sm text-white text-[12px]">${s.badge}</span>
+        </div>
+      </div>
+      <div class="p-8">
+        ${paragraphs.map(p => `<p class="text-[#312E81] text-[15px] leading-8 mb-4">${p}</p>`).join('')}
+        <div class="flex gap-3 pt-4 border-t border-[#E0E7FF] mt-6">
+          <button class="px-5 py-2 bg-[#6366F1] text-white text-[13px] font-medium hover:opacity-90 transition rounded-lg" onclick="this.textContent='♥ 已收藏'; this.classList.add('bg-[#C9A96E]')">收藏故事</button>
+          <button class="px-5 py-2 bg-[#EEF2FF] text-[#312E81] text-[13px] font-medium hover:bg-[#E0E7FF] transition rounded-lg" onclick="showPage('database');this.closest('.fixed').remove()">查看相关纹样</button>
+        </div>
+      </div>
+    </div>`;
+  document.body.appendChild(modal);
+}
+
+// ===== 每日推荐全文 =====
+const DAILY_DATA = [
+  {
+    title: '每日纹样：如意云纹',
+    img: 'images/image25.jpeg',
+    date: '今日 · 6月18日',
+    badge: '夹染 · 江苏南通',
+    full: `如意云纹是中国传统吉祥纹样之一，"如意"寓意"如人心意"，云纹则象征高升和如意。此纹样源自清代蓝印花布藏品，纹饰端庄典雅，线条流畅。\n\n如意云纹的构图以"如意头"为核心元素，形似灵芝或云朵，线条柔和舒展，两端微微上翘，形似微笑的嘴角。在传统纹样学中，如意头常与云纹、蝙蝠纹（"福"）、寿字纹组合使用，构成"福寿如意"、"祥云如意"等吉祥图案。\n\n此件如意云纹蓝印花布采用夹染工艺制作，以雕版防染法在白布上留出白色如意云纹，其余部分浸染为靛蓝色。纹样排列采用四方连续构图，每个如意云纹单元之间以细小回纹相连，形成连绵不断的视觉效果，寓意"如意绵长"。\n\n如意云纹在明清时期广泛用于服饰、帐幔、被面等生活用品。在江苏南通地区，如意云纹是嫁妆布上最常见的纹样之一，寄托着对新人"万事如意"的美好祝福。这种将文化寓意融入日常生活的设计智慧，是中国传统纹样的独特魅力所在。`
+  },
+  {
+    title: '螺旋纹 + 蜡染法',
+    img: 'images/image26.jpeg',
+    date: '每日关键词',
+    badge: '蜡染 · 湘西苗寨',
+    full: `漩涡状的螺旋纹在苗族蜡染中寓意宇宙的循环与生命的轮回。以蜡刀绘制层层螺旋，再用靛蓝浸染，蜡裂冰纹赋予画面独特的层次感和流动美。\n\n螺旋纹是人类最古老的纹样之一，在世界各地的原始文化中都能找到它的踪迹。在中国，螺旋纹最早见于新石器时代的彩陶，被认为是太阳崇拜和生命力的象征。苗族先民将这种古老的纹样融入蜡染工艺，赋予了它新的文化内涵。\n\n苗族蜡染中的螺旋纹有着严格的绘制规范。蜡染艺人使用铜制蜡刀，蘸取熔化的蜂蜡，在白布上以圆心为起点，向外绘制层层扩展的螺旋线。每一圈的间距需要均匀一致，线条需要流畅不断。这需要极高的手部稳定性和多年的练习经验。\n\n染色时，蜡膜在染液中受冷热变化影响而产生细微裂纹，靛蓝染液渗入裂纹，在脱蜡后形成独特的"冰纹"效果。这些天然形成的裂纹与人为绘制的螺旋纹相互交织，产生了人工与天工完美融合的艺术效果。每一件螺旋纹蜡染作品都是独一无二的，不可复制的。`
+  }
+];
+
+function showDailyDetail(idx) {
+  const d = DAILY_DATA[idx];
+  if (!d) return;
+  const modal = document.createElement('div');
+  modal.className = 'fixed inset-0 z-[100] bg-black/70 flex items-center justify-center p-6';
+  modal.onclick = () => modal.remove();
+  const paragraphs = d.full.split('\n\n');
+  modal.innerHTML = `
+    <div class="bg-white max-w-[700px] w-full max-h-[85vh] overflow-y-auto rounded-lg" onclick="event.stopPropagation()">
+      <div class="relative">
+        <img src="${d.img}" alt="${d.title}" class="w-full h-[280px] object-cover rounded-t-lg" />
+        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent rounded-t-lg"></div>
+        <button class="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/90 text-[#312E81] flex items-center justify-center text-xl font-bold z-10" onclick="this.closest('.fixed').remove()">×</button>
+        <div class="absolute bottom-5 left-6 right-6">
+          <span class="text-[12px] text-[#C9A96E] font-medium">${d.date}</span>
+          <h2 class="font-serif text-[26px] font-bold text-white mt-1 mb-2">${d.title}</h2>
+          <span class="px-3 py-1 bg-white/20 backdrop-blur-sm text-white text-[12px]">${d.badge}</span>
+        </div>
+      </div>
+      <div class="p-8">
+        ${paragraphs.map(p => `<p class="text-[#312E81] text-[15px] leading-8 mb-4">${p}</p>`).join('')}
+        <div class="flex gap-3 pt-4 border-t border-[#E0E7FF] mt-6">
+          ${idx === 1 ? `<button class="px-5 py-2 bg-[#6366F1] text-white text-[13px] font-medium hover:opacity-90 transition rounded-lg" onclick="showPage('generate');document.getElementById('keywords').value='蜡染法+螺旋纹';setTimeout(()=>generatePatterns(),300);this.closest('.fixed').remove()">🎨 用此关键词生成</button>` : ''}
+          <button class="px-5 py-2 bg-[#EEF2FF] text-[#312E81] text-[13px] font-medium hover:bg-[#E0E7FF] transition rounded-lg" onclick="this.textContent='♥ 已收藏'; this.classList.add('bg-[#C9A96E]','text-white')">收藏</button>
+        </div>
+      </div>
+    </div>`;
+  document.body.appendChild(modal);
+}
+
+// ===== 游戏逻辑 =====
+let gameStep = 1, knotsTied = 0;
+// 扎染成品图片池（按扎结数量递进）
+const TIE_RESULT_IMAGES = [
+  'images/image34.jpeg','images/image36.jpeg','images/image38.jpeg',
+  'images/image40.jpeg','images/image42.jpeg','images/image44.jpeg'
+];
+const TIE_RESULT_NAMES = [
+  '云纹·晕染纹样','圆点纹·晕染纹样','放射纹·渐变纹样',
+  '山形纹·折线纹样','水波纹·涡旋纹样','云纹·雨点纹样'
+];
+
+function switchGame(mode) {
+  document.querySelectorAll('.game-content').forEach(el => el.classList.add('hidden'));
+  document.querySelectorAll('.game-mode-btn').forEach(b => { b.classList.remove('bg-[#6366F1]','text-white'); b.classList.add('bg-[#EEF2FF]','text-[#64748B]'); });
+  document.getElementById('game-' + mode).classList.remove('hidden');
+  event.target.classList.remove('bg-[#EEF2FF]','text-[#64748B]');
+  event.target.classList.add('bg-[#6366F1]','text-white');
+}
+
+function tieKnot(btn) {
+  if (gameStep !== 1) return;
+  btn.classList.remove('border-dashed', 'border-[#C7D2FE]', 'bg-[#EEF2FF]', 'text-[#64748B]');
+  btn.classList.add('bg-[#6366F1]', 'text-white', 'border-[#6366F1]');
+  btn.disabled = true;
+  btn.textContent = '✓';
+  knotsTied++;
+  const countEl = document.getElementById('knot-count');
+  if (countEl) countEl.textContent = knotsTied;
+  if (knotsTied >= 3) document.getElementById('game-next-btn').disabled = false;
+}
+
+function updateStepDots(step) {
+  const dots = document.querySelectorAll('#game-steps-indicator .step-dot');
+  dots.forEach((d, i) => {
+    if (i < step) {
+      d.classList.remove('bg-[#C7D2FE]','text-[#64748B]');
+      d.classList.add('bg-[#6366F1]','text-white');
+    } else {
+      d.classList.remove('bg-[#6366F1]','text-white');
+      d.classList.add('bg-[#C7D2FE]','text-[#64748B]');
+    }
+  });
+}
+
+function gameNextStep() {
+  if (gameStep === 1 && knotsTied < 3) return;
+  gameStep++;
+  document.querySelectorAll('[id^="game-step"]').forEach(el => el.classList.add('hidden'));
+  document.getElementById('game-step' + gameStep).classList.remove('hidden');
+  document.getElementById('game-next-btn').disabled = true;
+  updateStepDots(gameStep);
+  document.getElementById('game-step-label').textContent = 'Step ' + gameStep + ' — ' + ['扎结布料','浸染上色','染色中','展开成品！'][gameStep-1];
+  if (gameStep === 2) {
+    const kd = document.getElementById('knot-display');
+    if (kd) kd.textContent = knotsTied;
+  }
+  if (gameStep === 3) autoDye();
+}
+
+function doDye() {
+  document.querySelectorAll('[id^="game-step"]').forEach(el => el.classList.add('hidden'));
+  document.getElementById('game-step3').classList.remove('hidden');
+  gameStep = 3;
+  document.getElementById('game-step-label').textContent = 'Step 3 — 染色中';
+  updateStepDots(3);
+  autoDye();
+}
+
+function autoDye() {
+  let progress = 0;
+  const bar = document.getElementById('dye-progress');
+  const interval = setInterval(() => {
+    progress += 3;
+    bar.style.width = progress + '%';
+    if (progress >= 100) {
+      clearInterval(interval);
+      setTimeout(() => {
+        document.querySelectorAll('[id^="game-step"]').forEach(el => el.classList.add('hidden'));
+        document.getElementById('game-step4').classList.remove('hidden');
+        gameStep = 4;
+        document.getElementById('game-step-label').textContent = 'Step 4 — 展开成品！';
+        updateStepDots(4);
+        // 根据扎结数量选取成品图片
+        const imgIdx = Math.min(knotsTied - 3, TIE_RESULT_IMAGES.length - 1);
+        const finalImg = document.getElementById('final-pattern-img');
+        const finalDesc = document.getElementById('final-pattern-desc');
+        if (finalImg) finalImg.src = TIE_RESULT_IMAGES[imgIdx];
+        if (finalDesc) finalDesc.textContent = `扎结 ${knotsTied} 点 · ${TIE_RESULT_NAMES[imgIdx]}`;
+      }, 500);
+    }
+  }, 60);
+}
+
+function resetGame() {
+  gameStep = 1; knotsTied = 0;
+  document.querySelectorAll('[id^="game-step"]').forEach(el => el.classList.add('hidden'));
+  document.getElementById('game-step1').classList.remove('hidden');
+  document.getElementById('game-next-btn').disabled = true;
+  document.getElementById('game-step-label').textContent = 'Step 1 — 扎结布料';
+  const countEl = document.getElementById('knot-count');
+  if (countEl) countEl.textContent = '0';
+  updateStepDots(1);
+  document.querySelectorAll('.tie-point').forEach(b => {
+    b.classList.add('border-dashed','border-[#C7D2FE]','bg-[#EEF2FF]','text-[#64748B]');
+    b.classList.remove('bg-[#6366F1]','text-white','border-[#6366F1]');
+    b.disabled = false;
+    b.textContent = '扎';
+  });
+}
+
+// ===== AI染布模拟器 =====
+// 预设模拟图片池（按布料类型 × 染料浓度）
+const SIM_PRESET = {
+  cotton: {
+    low:  ['images/image34.jpeg','images/image35.jpeg'],
+    mid:  ['images/image36.jpeg','images/image37.jpeg'],
+    high: ['images/image38.jpeg','images/image42.jpeg']
+  },
+  silk: {
+    low:  ['images/image56.jpeg','images/image57.jpeg'],
+    mid:  ['images/image60.jpeg','images/image61.jpeg'],
+    high: ['images/image64.jpeg','images/image66.jpeg']
+  },
+  linen: {
+    low:  ['images/image6.jpeg','images/image7.jpeg'],
+    mid:  ['images/image10.jpeg','images/image11.jpeg'],
+    high: ['images/image14.jpeg','images/image16.jpeg']
+  },
+  wool: {
+    low:  ['images/image75.jpeg','images/image76.jpeg'],
+    mid:  ['images/image79.jpeg','images/image80.jpeg'],
+    high: ['images/image83.jpeg','images/image85.jpeg']
+  }
+};
+
+function updateSimulator() {
+  // 更新滑块百分比标签
+  ['dye','knot','soak'].forEach(id => {
+    const fill = document.getElementById(id + '-fill');
+    const label = document.getElementById(id + '-label');
+    if (fill && label) {
+      const pct = Math.round(parseFloat(fill.style.width) || 50);
+      label.textContent = pct + '%';
+    }
+  });
+}
+
+function simulateDye() {
+  const result = document.getElementById('simulator-result');
+  const fabrics = { cotton: '棉布', silk: '丝绸', linen: '麻布', wool: '羊毛' };
+  const fabric = document.getElementById('fabric-type').value;
+  const dyeLevel = getSliderLevel('dye');
+  const knotLevel = getSliderLevel('knot');
+  const soakPct = parseFloat(document.getElementById('soak-fill')?.style.width) || 40;
+
+  // 选取预设图片
+  const pool = SIM_PRESET[fabric] || SIM_PRESET.cotton;
+  const imgs = pool[dyeLevel] || pool.mid;
+  // 扎法密度决定选哪张（低=第一张，高=第二张）
+  const imgIdx = knotLevel === 'high' ? 1 : 0;
+  const simImg = imgs[imgIdx];
+
+  // 浸泡时间影响滤镜效果
+  const filterStr = soakPct > 66 ? 'saturate(1.3) brightness(0.9)' : soakPct < 34 ? 'saturate(0.7) brightness(1.15)' : 'none';
+  const soakDesc = soakPct > 66 ? '深浸 · 色泽浓郁' : soakPct < 34 ? '浅浸 · 色泽淡雅' : '适中浸泡 · 色泽均衡';
+  const dyeDesc = dyeLevel === 'low' ? '低浓度' : dyeLevel === 'high' ? '高浓度' : '中浓度';
+  const knotDesc = knotLevel === 'low' ? '疏扎' : knotLevel === 'high' ? '密扎' : '适中扎法';
+
+  result.innerHTML = `
+    <div class="relative w-[200px] h-[200px] mx-auto mb-4 rounded-lg overflow-hidden border-4 border-[#C7D2FE] shadow-lg">
+      <img src="${simImg}" alt="模拟效果" class="w-full h-full object-cover" style="filter:${filterStr}" />
+      <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+    </div>
+    <p class="font-serif text-[18px] font-bold text-[#312E81] mb-1">${fabrics[fabric]} · 模拟效果</p>
+    <div class="flex gap-2 justify-center flex-wrap mb-2">
+      <span class="px-2 py-1 bg-[#EEF2FF] text-[11px] text-[#6366F1] font-medium">${dyeDesc}</span>
+      <span class="px-2 py-1 bg-[#EEF2FF] text-[11px] text-[#6366F1] font-medium">${knotDesc}</span>
+      <span class="px-2 py-1 bg-[#EEF2FF] text-[11px] text-[#64748B]">${soakDesc}</span>
+    </div>
+    <p class="text-[12px] text-[#94A3B8] mt-2">参数已应用 · 可继续调节后重新生成</p>
+  `;
+}
+
+// ===== 页面导航 =====
+function showPage(page) {
+  document.querySelectorAll('.page-content').forEach(el => { el.classList.remove('active'); });
+  const target = document.getElementById(page + '-page');
+  if (target) target.classList.add('active');
+  document.querySelectorAll('.nav-link').forEach(link => {
+    link.classList.remove('font-medium', 'text-[#312E81]');
+    link.classList.add('text-[#64748B]');
+  });
+  const activeLink = document.querySelector(`.nav-link[data-page="${page}"]`);
+  if (activeLink) {
+    activeLink.classList.add('font-medium', 'text-[#312E81]');
+    activeLink.classList.remove('text-[#64748B]');
+  }
+  window.scrollTo(0, 0);
+  // 进入纹样库时渲染
+  if (page === 'database' && document.getElementById('database-grid')?.children.length === 0) { dbOffset = 0; renderDatabase(DB_PATTERNS); }
+}
+
+// ===== 样式按钮 =====
+document.querySelectorAll('.style-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.style-btn').forEach(b => { b.classList.remove('bg-[#6366F1]','text-white'); b.classList.add('bg-[#EEF2FF]','text-[#64748B]'); });
+    this.classList.remove('bg-[#EEF2FF]','text-[#64748B]');
+    this.classList.add('bg-[#6366F1]','text-white');
+  });
+});
+
+// ===== 滑块 =====
+function setSlider(element, name, event) {
+  const rect = element.getBoundingClientRect();
+  const x = event.clientX - rect.left;
+  const percentage = Math.max(0, Math.min(100, (x / rect.width) * 100));
+  const fill = document.getElementById(name + '-fill');
+  if (fill) fill.style.width = percentage + '%';
+}
+
+// ===== 纹样生成模拟 =====
+function generatePatterns() {
+  const btn = document.getElementById('generate-btn');
+  const btnText = document.getElementById('btn-text');
+  const spinner = document.getElementById('btn-spinner');
+  const grid = document.getElementById('results-grid');
+  const resultsCount = document.getElementById('results-count');
+  btnText.textContent = '生成中...';
+  spinner.classList.remove('hidden');
+  btn.disabled = true;
+
+  // 读取当前参数
+  const style = getSelectedStyle();
+  const cLevel = getSliderLevel('complexity');
+  const sLevel = getSliderLevel('symmetry');
+  const dLevel = getSliderLevel('density');
+  const keywords = document.getElementById('keywords')?.value || '扎结法+冰裂纹';
+  const patternName = keywords.split('+')[1] || keywords.split('+')[0] || '冰裂纹';
+
+  // 根据工艺+复杂度选取预设图片组
+  const groupKey = style;
+  const imgs = (PRESET_GEN_GROUPS[groupKey] && PRESET_GEN_GROUPS[groupKey][cLevel])
+    ? PRESET_GEN_GROUPS[groupKey][cLevel].slice()
+    : PRESET_GEN_GROUPS['扎染']['mid'].slice();
+
+  // 对称性影响排列顺序：高对称 → 原序；低对称 → 打乱
+  let displayImgs = imgs.slice();
+  if (sLevel === 'low') { displayImgs.reverse(); displayImgs.push(displayImgs.shift()); }
+  else if (sLevel === 'high') { /* 保持原序，强调对称感 */ }
+
+  // 密度影响显示数量：低密度显示3张，中密度4张，高密度4张+缩略
+  const showCount = dLevel === 'low' ? 3 : 4;
+  displayImgs = displayImgs.slice(0, showCount);
+
+  const symLabels = SYMMETRY_LABELS[sLevel];
+  const densityDesc = DENSITY_DESC[dLevel];
+  const complexityLabel = cLevel === 'low' ? '简约' : cLevel === 'high' ? '繁复' : '均衡';
+
+  setTimeout(() => {
+    let html = '';
+    for (let i = 0; i < displayImgs.length; i++) {
+      const hasLocal = (cLevel === 'high' && i < 2) || (sLevel === 'high' && i === 1);
+      const variantLabel = symLabels[i] || ('变体 ' + String.fromCharCode(65 + i));
+      const heightCls = i % 2 === 0 ? 'h-[300px]' : 'h-[260px]';
+      html += `
+        <div class="bg-white card-shadow overflow-hidden group animate-[fadeIn_0.5s_ease-out_${i*0.1}s]">
+          <div class="${heightCls} relative overflow-hidden">
+            <img src="${displayImgs[i]}" alt="${patternName} · ${variantLabel}" class="w-full h-full object-cover img-zoom" loading="lazy" />
+            <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition bg-black/10 flex items-center justify-center">
+              <button class="bg-white/90 text-[#312E81] px-4 py-2 text-sm font-medium" onclick="openImageModal('${displayImgs[i]}','${patternName} · ${variantLabel}')">查看大图</button>
+            </div>
+            <div class="absolute top-3 left-3 flex gap-1.5">
+              <span class="px-2 py-1 bg-white/90 text-[11px] text-[#312E81] font-medium">${style}</span>
+              <span class="px-2 py-1 bg-[#6366F1]/90 text-[11px] text-white font-medium">${complexityLabel}</span>
+            </div>
+          </div>
+          <div class="p-5">
+            <h3 class="font-serif text-[16px] font-medium text-[#312E81] mb-1">${patternName} · ${variantLabel}</h3>
+            <p class="text-[12px] text-[#64748B] mb-3">${densityDesc}</p>
+            <div class="flex gap-3">
+              <button class="text-[12px] text-[#64748B] hover:text-[#6366F1] transition" onclick="this.textContent='♥ 已收藏'; this.classList.add('text-[#6366F1]')">收藏</button>
+              <button class="text-[12px] text-[#64748B] hover:text-[#6366F1] transition">分享</button>
+              ${hasLocal ? '<button class="text-[12px] text-[#6366F1] font-medium hover:opacity-80" onclick="localVariation(this)">局部变化</button>' : ''}
+            </div>
+          </div>
+        </div>`;
+    }
+    grid.innerHTML = html;
+    if (resultsCount) resultsCount.textContent = displayImgs.length + ' 张纹样';
+    // 更新参数信息栏
+    const levelCN = { low:'低', mid:'中', high:'高' };
+    const barStyle = document.getElementById('bar-style');
+    const barC = document.getElementById('bar-complexity');
+    const barS = document.getElementById('bar-symmetry');
+    const barD = document.getElementById('bar-density');
+    if (barStyle) barStyle.textContent = style;
+    if (barC) barC.textContent = levelCN[cLevel];
+    if (barS) barS.textContent = levelCN[sLevel];
+    if (barD) barD.textContent = levelCN[dLevel];
+    btnText.textContent = '重新生成';
+    spinner.classList.add('hidden');
+    btn.disabled = false;
+  }, 1200);
+}
+
+// 图片大图弹窗
+function openImageModal(src, title) {
+  const modal = document.createElement('div');
+  modal.className = 'fixed inset-0 z-[100] bg-black/80 flex items-center justify-center p-8';
+  modal.onclick = () => modal.remove();
+  modal.innerHTML = `
+    <div class="relative max-w-[700px] max-h-[80vh]" onclick="event.stopPropagation()">
+      <img src="${src}" alt="${title}" class="max-w-full max-h-[75vh] object-contain" />
+      <p class="text-white text-center mt-4 font-serif text-[18px]">${title}</p>
+      <button class="absolute -top-4 -right-4 w-10 h-10 rounded-full bg-white text-[#312E81] flex items-center justify-center text-xl font-bold" onclick="this.parentElement.parentElement.remove()">×</button>
+    </div>`;
+  document.body.appendChild(modal);
+}
+
+// 局部变化交互
+function localVariation(btn) {
+  const card = btn.closest('.bg-white');
+  const img = card?.querySelector('img');
+  if (img) {
+    img.style.filter = img.style.filter ? '' : 'hue-rotate(15deg) brightness(1.1)';
+    btn.textContent = img.style.filter ? '还原' : '局部变化';
+  }
+}
+
+// ===== 初始化 =====
+showPage('home');
+updateSimulator();
+renderDatabase(DB_PATTERNS);
+</script>
+
+</body>
+</html>
